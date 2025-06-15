@@ -1,0 +1,235 @@
+/* Dashboard Specific Styles */
+
+/* Quick Access Cards Grid */
+.quick-access-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+/* Quick Access Card */
+.quick-access-card {
+    position: relative;
+    padding: 1.5rem;
+    background: var(--background);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+
+.quick-access-card:hover {
+    background: var(--muted);
+}
+
+/* Card Border Accents */
+.border-purple {
+    border-left: 4px solid hsl(270, 95%, 75%);
+}
+
+.border-yellow {
+    border-left: 4px solid hsl(45, 95%, 75%);
+}
+
+.border-pink {
+    border-left: 4px solid hsl(330, 95%, 75%);
+}
+
+.border-blue {
+    border-left: 4px solid hsl(210, 95%, 75%);
+}
+
+/* Card Content Layout */
+.quick-access-card-content {
+    position: relative;
+    z-index: 2;
+}
+
+.quick-access-number {
+    font-size: 2.25rem;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--foreground);
+    margin-bottom: 0.5rem;
+}
+
+.quick-access-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--muted-foreground);
+}
+
+/* Card Icons */
+.quick-access-icon {
+    position: absolute;
+    right: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius);
+    opacity: 0.2;
+}
+
+.quick-access-icon i {
+    font-size: 1.75rem;
+    color: var(--foreground);
+}
+
+/* Icon Background Colors */
+.purple { background: hsl(270, 95%, 75%); }
+.yellow { background: hsl(45, 95%, 75%); }
+.pink { background: hsl(330, 95%, 75%); }
+.blue { background: hsl(210, 95%, 75%); }
+
+/* Main Grid Layout */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+/* Activity Card */
+.activity-card {
+    background: var(--background);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+}
+
+.activity-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
+
+.activity-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--foreground);
+}
+
+/* Activity Items */
+.activity-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--muted);
+    border-radius: var(--radius);
+    margin-bottom: 0.75rem;
+    transition: transform 0.2s ease;
+}
+
+.activity-item:hover {
+    transform: translateX(4px);
+}
+
+.activity-item:last-child {
+    margin-bottom: 0;
+}
+
+.activity-icon {
+    width: 32px;
+    height: 32px;
+    background: var(--background);
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.activity-icon i {
+    font-size: 1.25rem;
+    color: var(--primary);
+}
+
+.activity-content h4 {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--foreground);
+    margin-bottom: 0.25rem;
+}
+
+.activity-content p {
+    font-size: 0.75rem;
+    color: var(--muted-foreground);
+}
+
+/* Quick Links Grid */
+.quick-links-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+}
+
+.quick-link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: var(--background);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--foreground);
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.quick-link-btn:hover {
+    background: var(--muted);
+    border-color: var(--border-hover);
+}
+
+.quick-link-btn i {
+    font-size: 1.25rem;
+    color: var(--primary);
+}
+
+/* Welcome Section */
+.welcome-section {
+    margin-bottom: 2rem;
+}
+
+.welcome-section h1 {
+    font-size: 1.875rem;
+    font-weight: 600;
+    color: var(--foreground);
+    margin-bottom: 0.5rem;
+}
+
+.text-muted {
+    color: var(--muted-foreground);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .quick-access-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .quick-access-row {
+        grid-template-columns: 1fr;
+    }
+
+    .quick-links-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .welcome-section h1 {
+        font-size: 1.5rem;
+    }
+} 

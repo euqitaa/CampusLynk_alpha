@@ -1,0 +1,86 @@
+/* Table Styles */
+.table-container {
+    background: var(--background);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+
+.table th {
+    font-weight: 600;
+    text-align: left;
+    padding: 0.75rem;
+    color: var(--foreground);
+    border-bottom: 2px solid var(--border);
+    white-space: nowrap;
+}
+
+.table td {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--muted-foreground);
+}
+
+.table tr:last-child td {
+    border-bottom: none;
+}
+
+.table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.table tbody tr:hover {
+    background-color: var(--muted);
+}
+
+/* Time Column */
+.table td:first-child {
+    font-weight: 500;
+    color: var(--foreground);
+    white-space: nowrap;
+}
+
+/* Class Cell */
+.class-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.class-name {
+    font-weight: 500;
+    color: var(--foreground);
+}
+
+.class-info {
+    font-size: 0.75rem;
+    color: var(--muted-foreground);
+}
+
+/* Empty Cell */
+.empty-cell {
+    color: var(--muted-foreground);
+    font-style: italic;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .table-container {
+        margin: 0 -1rem;
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+    }
+
+    .table th,
+    .table td {
+        padding: 0.5rem;
+    }
+} 
