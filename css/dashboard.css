@@ -86,6 +86,13 @@
 .pink { background: hsl(330, 95%, 75%); }
 .blue { background: hsl(210, 95%, 75%); }
 
+.content-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
 /* Main Grid Layout */
 .dashboard-grid {
     display: grid;
@@ -94,71 +101,48 @@
     margin-top: 2rem;
 }
 
-/* Activity Card */
-.activity-card {
+.card {
     background: var(--background);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     padding: 1.5rem;
 }
 
-.activity-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--foreground);
     margin-bottom: 1.5rem;
 }
 
-.activity-title {
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: var(--foreground);
+.activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
-/* Activity Items */
 .activity-item {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 1rem;
     padding: 1rem;
     background: var(--muted);
     border-radius: var(--radius);
-    margin-bottom: 0.75rem;
-    transition: transform 0.2s ease;
-}
-
-.activity-item:hover {
-    transform: translateX(4px);
-}
-
-.activity-item:last-child {
-    margin-bottom: 0;
 }
 
 .activity-icon {
-    width: 32px;
-    height: 32px;
-    background: var(--background);
-    border-radius: var(--radius);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.activity-icon i {
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     color: var(--primary);
 }
 
-.activity-content h4 {
-    font-size: 0.875rem;
+.activity-details .activity-title-sub {
     font-weight: 500;
-    color: var(--foreground);
     margin-bottom: 0.25rem;
+    color: var(--foreground);
 }
 
-.activity-content p {
-    font-size: 0.75rem;
+.activity-details .activity-description {
+    font-size: 0.875rem;
     color: var(--muted-foreground);
 }
 
