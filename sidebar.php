@@ -14,7 +14,7 @@ try {
     $database = new Database();
     $db = $database->getConnection();
     
-    $query = $db->prepare("SELECT name FROM users WHERE email = ?");
+    $query = $db->prepare("SELECT * FROM users WHERE email = ?");
     $query->execute([$_SESSION['useremail']]);
     $user = $query->fetch(PDO::FETCH_ASSOC);
     
