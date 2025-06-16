@@ -11,14 +11,14 @@ if (!isset($_SESSION["useremail"]) || empty($_SESSION["useremail"])) {
 require_once 'config/database.php';
 
 try {
-    $database = new Database();
-    $db = $database->getConnection();
+    $sidebar_database = new Database();
+    $sidebar_db = $sidebar_database->getConnection();
     
-    $query = $db->prepare("SELECT * FROM users WHERE email = ?");
-    $query->execute([$_SESSION['useremail']]);
-    $user = $query->fetch(PDO::FETCH_ASSOC);
+    $sidebar_query = $sidebar_db->prepare("SELECT * FROM users WHERE email = ?");
+    $sidebar_query->execute([$_SESSION['useremail']]);
+    $sidebar_user = $sidebar_query->fetch(PDO::FETCH_ASSOC);
     
-    if (!$user) {
+    if (!$sidebar_user) {
         session_destroy();
         header("Location: login.php?error=User not found");
         exit();
@@ -43,8 +43,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <i class='bx bxs-user-circle'></i>
             </div>
             <div class="user-details">
-                <h3 class="user-name"><?php echo htmlspecialchars($user['name']); ?></h3>
-                <p class="user-email"><?php echo htmlspecialchars($_SESSION['useremail']); ?></p>
+                <h3 class="user-name"><?php echo htmlspecialchars($sidebar_user['name']); ?></h3>
+                <p class="user-email"><?php echo htmlspecialchars($sidebar_user['email']); ?></p>
             </div>
         </a>
     </div>
