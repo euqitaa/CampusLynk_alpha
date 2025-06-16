@@ -10,13 +10,45 @@ require_once 'config/database.php';
 
 $database = new Database();
 $db = $database->getConnection();
+$schedule = [];
+$days = ['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+foreach ($days as $day) {
+    $schedule[$day] = [];
+}
 
 try {
-    // Fetch user data
-    $userQuery = "SELECT name FROM users WHERE email = ?";
+    // Fetch user id
+    $userQuery = "SELECT id, name FROM users WHERE email = ?";
     $userStmt = $db->prepare($userQuery);
     $userStmt->execute([$_SESSION["useremail"]]);
     $user = $userStmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($user) {
+        $userId = $user['id'];
+
+        // Fetch student's enrolled courses and their schedules
+        $routineQuery = "
+            SELECT 
+                uc.course_code, 
+                uc.course_title, 
+                uc.section, 
+                uc.time, 
+                uc.day
+            FROM student_enrollments se
+            JOIN upcoming_courses uc ON se.course_id = uc.id
+            WHERE se.student_id = ?
+        ";
+        $routineStmt = $db->prepare($routineQuery);
+        $routineStmt->execute([$userId]);
+        $enrolled_courses = $routineStmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($enrolled_courses as $course) {
+            if (in_array($course['day'], $days)) {
+                $schedule[$course['day']][] = $course;
+            }
+        }
+    }
+
 } catch(PDOException $e) {
     echo "<script>alert('Database Error: " . $e->getMessage() . "');</script>";
 }
@@ -45,45 +77,32 @@ try {
     <main class="main-content">
         <section class="welcome-section">
             <h1>Class Routine</h1>
-            <p class="text-muted">View your class schedule for the semester</p>
+            <p class="text-muted">Your personalized class schedule for the week</p>
         </section>
 
-        <div class="table-container">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Time</th>
-                        <th>Monday</th>
-                        <th>Tuesday</th>
-                        <th>Wednesday</th>
-                        <th>Thursday</th>
-                        <th>Friday</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    $timeSlots = [
-                        '9:00 AM - 10:30 AM',
-                        '10:45 AM - 12:15 PM',
-                        '12:30 PM - 2:00 PM',
-                        '2:15 PM - 3:45 PM',
-                        '4:00 PM - 5:30 PM'
-                    ];
-
-                    foreach ($timeSlots as $time) {
-                        echo '<tr>';
-                        echo '<td>' . htmlspecialchars($time) . '</td>';
-                        for ($i = 0; $i < 5; $i++) {
-                            echo '<td><div class="class-cell">
-                                    <span class="class-name">Class ' . ($i + 1) . '</span>
-                                    <span class="class-info">Room 101</span>
-                                  </div></td>';
-                        }
-                        echo '</tr>';
-                    }
-                    ?>
-                </tbody>
-            </table>
+        <div class="routine-container">
+            <div class="days-grid">
+                <?php foreach ($days as $day): ?>
+                    <div class="day-column">
+                        <div class="day-header"><?php echo $day; ?></div>
+                        <div class="class-slots">
+                            <?php if (!empty($schedule[$day])): ?>
+                                <?php foreach ($schedule[$day] as $class): ?>
+                                    <div class="class-card">
+                                        <p class="class-time"><?php echo htmlspecialchars($class['time']); ?></p>
+                                        <p class="class-title"><?php echo htmlspecialchars($class['course_title']); ?></p>
+                                        <p class="class-code"><?php echo htmlspecialchars($class['course_code']); ?> [<?php echo htmlspecialchars($class['section']); ?>]</p>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <div class="no-class-card">
+                                    <p>No classes scheduled</p>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
         </div>
     </main>
 </body>

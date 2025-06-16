@@ -22,6 +22,10 @@ try {
         header("Location: login.php?error=User not found");
         exit();
     }
+
+    $course_query = $db->query("SELECT course_code, MIN(course_title) as course_title FROM upcoming_courses GROUP BY course_code ORDER BY MIN(course_title)");
+    $courses = $course_query->fetchAll(PDO::FETCH_ASSOC);
+
 } catch (PDOException $e) {
     header("Location: login.php?error=Database Error: " . urlencode($e->getMessage()));
     exit();
@@ -52,6 +56,21 @@ try {
         <section class="welcome-section">
             <h1>Welcome, <?php echo htmlspecialchars($user['name']); ?></h1>
             <p class="text-muted">Access your student dashboard</p>
+            <?php if (isset($_GET['success'])): ?>
+                <div class="alert alert-success">
+                    <?php echo htmlspecialchars($_GET['success']); ?>
+                </div>
+            <?php endif; ?>
+            <?php if (isset($_GET['error'])): ?>
+                <div class="alert alert-danger">
+                    <?php echo htmlspecialchars($_GET['error']); ?>
+                </div>
+            <?php endif; ?>
+             <?php if (isset($_GET['message'])): ?>
+                <div class="alert alert-info">
+                    <?php echo htmlspecialchars($_GET['message']); ?>
+                </div>
+            <?php endif; ?>
         </section>
 
         <div class="quick-access-row">
@@ -116,8 +135,61 @@ try {
                     </div>
                 </div>
             </div>
+            <div class="card">
+                <h2 class="card-title">Enroll in a Course</h2>
+                <form action="enroll.php" method="POST" id="enroll-form" class="form-grid">
+                    <div class="form-group">
+                        <label for="course" class="form-label">Course</label>
+                        <select name="course_code" id="course" class="form-input">
+                            <option value="">-- Select a Course --</option>
+                            <?php foreach ($courses as $course): ?>
+                                <option value="<?php echo htmlspecialchars($course['course_code']); ?>">
+                                    <?php echo htmlspecialchars($course['course_title']) . ' (' . htmlspecialchars($course['course_code']) . ')'; ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="section" class="form-label">Section</label>
+                        <select name="section" id="section" class="form-input" disabled>
+                            <option value="">-- Select a Course First --</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Enroll</button>
+                </form>
+            </div>
         </div>
     </main>
+
+    <script>
+        document.getElementById('course').addEventListener('change', function() {
+            const courseCode = this.value;
+            const sectionSelect = document.getElementById('section');
+            sectionSelect.disabled = true;
+            sectionSelect.innerHTML = '<option value="">Loading...</option>';
+
+            if (courseCode) {
+                fetch('get_sections.php?course_code=' + courseCode)
+                    .then(response => response.json())
+                    .then(data => {
+                        sectionSelect.innerHTML = '<option value="">-- Select a Section --</option>';
+                        data.forEach(section => {
+                            const option = document.createElement('option');
+                            option.value = section.section;
+                            option.textContent = 'Section ' + section.section;
+                            sectionSelect.appendChild(option);
+                        });
+                        sectionSelect.disabled = false;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching sections:', error);
+                        sectionSelect.innerHTML = '<option value="">Error loading sections</option>';
+                    });
+            } else {
+                sectionSelect.innerHTML = '<option value="">-- Select a Course First --</option>';
+            }
+        });
+    </script>
 
 </body>
 

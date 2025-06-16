@@ -13,7 +13,7 @@ $database = new Database();
 $db = $database->getConnection();
 
 try {
-    $query = "SELECT * FROM upcoming_courses";
+    $query = "SELECT course_code, MIN(course_title) AS course_title, MIN(id) AS id FROM upcoming_courses GROUP BY course_code ORDER BY MIN(course_title)";
     $stmt = $db->prepare($query);
     $stmt->execute();
     $courses = $stmt->fetchAll(PDO::FETCH_ASSOC);
