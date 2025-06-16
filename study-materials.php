@@ -54,7 +54,7 @@ try {
             <div class="course-card">
                 <h3 class="course-title"><?php echo htmlspecialchars($course['course_title']); ?></h3>
                 <p class="course-description"><?php echo htmlspecialchars($course['course_code']); ?></p>
-                <a href="view_materials.php?course_id=<?php echo $course['id']; ?>" class="btn-view-materials">
+                <a href="course_materials.php?course_code=<?php echo urlencode($course['course_code']); ?>" class="btn-view-materials">
                     <i class='bx bx-book-open'></i>
                     <span>View Materials</span>
                 </a>
