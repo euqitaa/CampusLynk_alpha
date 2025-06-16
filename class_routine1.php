@@ -11,14 +11,11 @@ require_once 'config/database.php';
 $database = new Database();
 $db = $database->getConnection();
 $schedule = [];
-$days = ['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
-foreach ($days as $day) {
-    $schedule[$day] = [];
-}
+$timeSlots = [];
+$days = ['Sat', 'Sun', 'Tue', 'Wed'];
 
 try {
-    // Fetch user id
-    $userQuery = "SELECT id, name FROM users WHERE email = ?";
+    $userQuery = "SELECT id FROM users WHERE email = ?";
     $userStmt = $db->prepare($userQuery);
     $userStmt->execute([$_SESSION["useremail"]]);
     $user = $userStmt->fetch(PDO::FETCH_ASSOC);
@@ -26,14 +23,8 @@ try {
     if ($user) {
         $userId = $user['id'];
 
-        // Fetch student's enrolled courses and their schedules
         $routineQuery = "
-            SELECT 
-                uc.course_code, 
-                uc.course_title, 
-                uc.section, 
-                uc.time, 
-                uc.day
+            SELECT uc.course_code, uc.course_title, uc.section, uc.time, uc.day
             FROM student_enrollments se
             JOIN upcoming_courses uc ON se.course_id = uc.id
             WHERE se.student_id = ?
@@ -42,14 +33,44 @@ try {
         $routineStmt->execute([$userId]);
         $enrolled_courses = $routineStmt->fetchAll(PDO::FETCH_ASSOC);
 
+        $processed_courses = [];
         foreach ($enrolled_courses as $course) {
-            if (in_array($course['day'], $days)) {
-                $schedule[$course['day']][] = $course;
+            $processed_courses[] = $course;
+            if ($course['day'] === 'Sat') {
+                $processed_courses[] = array_merge($course, ['day' => 'Tue']);
+            }
+            if ($course['day'] === 'Sun') {
+                $processed_courses[] = array_merge($course, ['day' => 'Wed']);
             }
         }
+
+        foreach ($processed_courses as $course) {
+            if (in_array($course['day'], $days)) {
+                $schedule[$course['time']][$course['day']] = $course;
+                if (!in_array($course['time'], $timeSlots)) {
+                    $timeSlots[] = $course['time'];
+                }
+            }
+        }
+        
+        usort($timeSlots, function ($a, $b) {
+            // Use DateTime objects for a reliable sort
+            $timeA_str = trim(explode('-', $a)[0]);
+            $timeB_str = trim(explode('-', $b)[0]);
+            
+            $timeA = DateTime::createFromFormat('h:i:A', $timeA_str);
+            $timeB = DateTime::createFromFormat('h:i:A', $timeB_str);
+
+            // Fallback for safety, though it shouldn't be needed now
+            if ($timeA === false || $timeB === false) {
+                return strtotime($timeA_str) <=> strtotime($timeB_str);
+            }
+            
+            return $timeA <=> $timeB;
+        });
     }
 
-} catch(PDOException $e) {
+} catch (PDOException $e) {
     echo "<script>alert('Database Error: " . $e->getMessage() . "');</script>";
 }
 ?>
@@ -80,29 +101,44 @@ try {
             <p class="text-muted">Your personalized class schedule for the week</p>
         </section>
 
-        <div class="routine-container">
-            <div class="days-grid">
-                <?php foreach ($days as $day): ?>
-                    <div class="day-column">
-                        <div class="day-header"><?php echo $day; ?></div>
-                        <div class="class-slots">
-                            <?php if (!empty($schedule[$day])): ?>
-                                <?php foreach ($schedule[$day] as $class): ?>
-                                    <div class="class-card">
-                                        <p class="class-time"><?php echo htmlspecialchars($class['time']); ?></p>
-                                        <p class="class-title"><?php echo htmlspecialchars($class['course_title']); ?></p>
-                                        <p class="class-code"><?php echo htmlspecialchars($class['course_code']); ?> [<?php echo htmlspecialchars($class['section']); ?>]</p>
-                                    </div>
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <?php foreach ($days as $day): ?>
+                            <th><?php echo htmlspecialchars($day); ?></th>
+                        <?php endforeach; ?>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (empty($timeSlots)): ?>
+                        <tr>
+                            <td colspan="<?php echo count($days) + 1; ?>" style="text-align: center;">You are not enrolled in any courses.</td>
+                        </tr>
+                    <?php else: ?>
+                        <?php foreach ($timeSlots as $time): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($time); ?></td>
+                                <?php foreach ($days as $day): ?>
+                                    <td>
+                                        <?php if (isset($schedule[$time][$day])): 
+                                            $class = $schedule[$time][$day];
+                                        ?>
+                                            <div class="class-cell">
+                                                <span class="class-name"><?php echo htmlspecialchars($class['course_title']); ?></span>
+                                                <span class="class-info"><?php echo htmlspecialchars($class['course_code']); ?> [<?php echo htmlspecialchars($class['section']); ?>]</span>
+                                            </div>
+                                        <?php else: ?>
+                                            <div class="empty-cell"></div>
+                                        <?php endif; ?>
+                                    </td>
                                 <?php endforeach; ?>
-                            <?php else: ?>
-                                <div class="no-class-card">
-                                    <p>No classes scheduled</p>
-                                </div>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
         </div>
     </main>
 </body>

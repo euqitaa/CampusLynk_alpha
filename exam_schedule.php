@@ -10,21 +10,41 @@ require_once 'config/database.php';
 
 $database = new Database();
 $db = $database->getConnection();
+$exams = [];
 
 try {
-    // Fetch user data
-    $userQuery = "SELECT name FROM users WHERE email = ?";
+    // Fetch user id
+    $userQuery = "SELECT id FROM users WHERE email = ?";
     $userStmt = $db->prepare($userQuery);
     $userStmt->execute([$_SESSION["useremail"]]);
     $user = $userStmt->fetch(PDO::FETCH_ASSOC);
 
-    // Fetch exam schedule
-    $query = "SELECT * FROM exam_schedule ORDER BY exam_date ASC";
-    $stmt = $db->prepare($query);
-    $stmt->execute();
-    $exams = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    if ($user) {
+        $userId = $user['id'];
+
+        // Fetch the student's exam schedule by joining enrollments with exam tables
+        $examQuery = "
+            SELECT 
+                ex.course_title,
+                ex.course_code,
+                ex.date,
+                ex.day,
+                ex.time,
+                ex.section
+            FROM student_enrollments se
+            JOIN upcoming_courses uc ON se.course_id = uc.id
+            JOIN cse_exams ex ON uc.course_code = ex.course_code AND se.section = ex.section
+            WHERE se.student_id = ?
+            ORDER BY ex.date, ex.time
+        ";
+        
+        $examStmt = $db->prepare($examQuery);
+        $examStmt->execute([$userId]);
+        $exams = $examStmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 } catch(PDOException $e) {
-    echo "<script>alert('Database Error: " . $e->getMessage() . "');</script>";
+    // A more user-friendly error message
+    echo "<p>Could not retrieve exam schedule. Please try again later.</p>";
 }
 ?>
 
@@ -58,29 +78,31 @@ try {
                 <thead>
                     <tr>
                         <th>Course</th>
-                        <th>Exam Date</th>
+                        <th>Code</th>
+                        <th>Date</th>
+                        <th>Day</th>
                         <th>Time</th>
-                        <th>Room</th>
-                        <th>Duration</th>
+                        <th>Section</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php if (isset($exams) && !empty($exams)): ?>
+                    <?php if (!empty($exams)): ?>
                         <?php foreach ($exams as $exam): ?>
                             <tr>
-                                <td><?php echo htmlspecialchars($exam['course_name']); ?></td>
-                                <td class="exam-date"><?php echo date('M j, Y', strtotime($exam['exam_date'])); ?></td>
-                                <td class="exam-time"><?php echo htmlspecialchars($exam['exam_time']); ?></td>
-                                <td><span class="room-number"><?php echo htmlspecialchars($exam['room_number']); ?></span></td>
-                                <td><span class="duration"><?php echo htmlspecialchars($exam['duration']); ?> hours</span></td>
+                                <td><?php echo htmlspecialchars($exam['course_title']); ?></td>
+                                <td><?php echo htmlspecialchars($exam['course_code']); ?></td>
+                                <td class="exam-date"><?php echo date('M j, Y', strtotime($exam['date'])); ?></td>
+                                <td><?php echo htmlspecialchars($exam['day']); ?></td>
+                                <td class="exam-time"><?php echo htmlspecialchars(substr($exam['time'], 0, 5)); ?></td>
+                                <td><?php echo htmlspecialchars($exam['section']); ?></td>
                             </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="5">
+                            <td colspan="6">
                                 <div class="empty-state">
                                     <i class='bx bx-calendar-x'></i>
-                                    <p>No exams scheduled at the moment</p>
+                                    <p>No exams scheduled for your enrolled courses</p>
                                 </div>
                             </td>
                         </tr>
