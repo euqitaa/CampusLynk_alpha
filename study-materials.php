@@ -11,12 +11,32 @@ require_once 'config/database.php';
 
 $database = new Database();
 $db = $database->getConnection();
+$courses = [];
 
 try {
-    $query = "SELECT course_code, MIN(course_title) AS course_title, MIN(id) AS id FROM upcoming_courses GROUP BY course_code ORDER BY MIN(course_title)";
-    $stmt = $db->prepare($query);
-    $stmt->execute();
-    $courses = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // Fetch user id
+    $userQuery = $db->prepare("SELECT id FROM users WHERE email = ?");
+    $userQuery->execute([$_SESSION['useremail']]);
+    $user = $userQuery->fetch(PDO::FETCH_ASSOC);
+
+    if ($user) {
+        $userId = $user['id'];
+
+        // Fetch only the courses the student is enrolled in
+        $query = "
+            SELECT
+                uc.course_code,
+                MIN(uc.course_title) AS course_title
+            FROM student_enrollments se
+            JOIN upcoming_courses uc ON se.course_id = uc.id
+            WHERE se.student_id = ?
+            GROUP BY uc.course_code
+            ORDER BY MIN(uc.course_title)
+        ";
+        $stmt = $db->prepare($query);
+        $stmt->execute([$userId]);
+        $courses = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 } catch(PDOException $e) {
     echo "<script>alert('Database Error: " . $e->getMessage() . "');</script>";
 }
@@ -50,20 +70,24 @@ try {
         </section>
 
         <div class="course-grid">
-            <?php foreach ($courses as $course): ?>
-            <div class="course-card">
-                <h3 class="course-title"><?php echo htmlspecialchars($course['course_title']); ?></h3>
-                <p class="course-description"><?php echo htmlspecialchars($course['course_code']); ?></p>
-                <a href="course_materials.php?course_code=<?php echo urlencode($course['course_code']); ?>" class="btn-view-materials">
-                    <i class='bx bx-book-open'></i>
-                    <span>View Materials</span>
-                </a>
-            </div>
-            <?php endforeach; ?>
+            <?php if (empty($courses)): ?>
+                <div class="empty-state-container">
+                    <p>You are not enrolled in any courses yet. Please enroll in a course to see its materials.</p>
+                </div>
+            <?php else: ?>
+                <?php foreach ($courses as $course): ?>
+                <div class="course-card">
+                    <h3 class="course-title"><?php echo htmlspecialchars($course['course_title']); ?></h3>
+                    <p class="course-description"><?php echo htmlspecialchars($course['course_code']); ?></p>
+                    <a href="course_materials.php?course_code=<?php echo urlencode($course['course_code']); ?>" class="btn-view-materials">
+                        <i class='bx bx-book-open'></i>
+                        <span>View Materials</span>
+                    </a>
+                </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </div>
     </main>
 </body>
 
 </html>
-
-?>
