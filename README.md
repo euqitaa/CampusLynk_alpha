@@ -1,3 +1,4 @@
+log date: 17/6/2025
 as python script is added, you might need to install python. then install these imports:
 
 pip install mysql-connector-python
