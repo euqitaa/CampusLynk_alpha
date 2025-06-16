@@ -1545,27 +1545,29 @@ INSERT INTO `upcoming_courses` (`id`, `course_code`, `course_title`, `section`, 
 --
 
 CREATE TABLE `users` (
-  `id` int(11) NOT NULL,
-  `username` varchar(255) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `role` enum('student','faculty','admin') NOT NULL,
-  `name` varchar(255) NOT NULL
+  `role` enum('student','admin') NOT NULL DEFAULT 'student',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `email`, `password`, `role`, `name`) VALUES
-(1, 'sakib-niloy', 'sakibhassan147@gmail.com', '$2b$10$05BiL9LDiHlihbsJUmZOj.dJlBEnEo94GiU7fSSLMSFsb3duFOwjS', 'student', 'sakib uddin niloy'),
-(2, 'ibrahim', 'ibrahim@gmail.com', '$2b$10$lDC3I5E4AzqYsVpj2aEN7OwEi7uB8jfZI9sgfN2iCQHgtnqNgwnEe', 'student', 'sayed ibrahim'),
-(3, 'mahatab', 'mahatab@gmail.com', '$2b$10$8FRcX.AcMXZjLBDSL1jxbOk.iN6Q5At.qVJS7W/jjIjfyIsNFO9uO', 'faculty', 'mahatab uddin'),
-(8, 'atq444', 'atq@gmail.com', '$2b$10$RdZbH.AU7gjsmG0INJGr5.iReDPfzfCW45w6U2h8LRmlH8lGxhja2', 'student', 'Atique'),
-(9, '011221521', 'ilham@gmail.com', '690819f29b27d635bc6ff0d562afbf75', 'student', 'ilham'),
-(10, 'emad@gmail.com', 'emad@gmail.com', '432ea5027f47027281a2e5f373e5edf6', 'student', 'emad'),
-(11, 'autumnsimp', 'emad200105@gmail.com', 'a8fa0b55df1ff8ba3c086dbcfc305d4a', 'student', 'Hasnat Emad'),
-(12, 'KK', 'a@gmail.com', 'a8fa0b55df1ff8ba3c086dbcfc305d4a', 'student', 'Md. Abu Hasnat');
+INSERT INTO `users` (`id`, `name`, `email`, `password`, `role`, `created_at`) VALUES
+(1, 'sakib uddin niloy', 'sakibhassan147@gmail.com', '$2b$10$05BiL9LDiHlihbsJUmZOj.dJlBEnEo94GiU7fSSLMSFsb3duFOwjS', 'student', '2025-02-20 09:43:00'),
+(2, 'sayed ibrahim', 'ibrahim@gmail.com', '$2b$10$lDC3I5E4AzqYsVpj2aEN7OwEi7uB8jfZI9sgfN2iCQHgtnqNgwnEe', 'student', '2025-02-20 09:43:00'),
+(3, 'mahatab uddin', 'mahatab@gmail.com', '$2b$10$8FRcX.AcMXZjLBDSL1jxbOk.iN6Q5At.qVJS7W/jjIjfyIsNFO9uO', 'faculty', '2025-02-20 09:43:00'),
+(8, 'Atique', 'atq@gmail.com', '$2b$10$RdZbH.AU7gjsmG0INJGr5.iReDPfzfCW45w6U2h8LRmlH8lGxhja2', 'student', '2025-02-20 09:43:00'),
+(9, 'ilham', 'ilham@gmail.com', '690819f29b27d635bc6ff0d562afbf75', 'student', '2025-02-20 09:43:00'),
+(10, 'emad', 'emad@gmail.com', '432ea5027f47027281a2e5f373e5edf6', 'student', '2025-02-20 09:43:00'),
+(11, 'Hasnat Emad', 'emad200105@gmail.com', 'a8fa0b55df1ff8ba3c086dbcfc305d4a', 'student', '2025-02-20 09:43:00'),
+(12, 'Md. Abu Hasnat', 'a@gmail.com', 'a8fa0b55df1ff8ba3c086dbcfc305d4a', 'student', '2025-02-20 09:43:00');
 
 --
 -- Indexes for dumped tables
@@ -1770,3 +1772,53 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+--
+-- Table structure for table `course_schedules`
+--
+
+CREATE TABLE `course_schedules` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `course_code` varchar(20) NOT NULL,
+  `course_title` varchar(255) NOT NULL,
+  `section` varchar(10) NOT NULL,
+  `day` enum('Saturday','Sunday','Monday','Tuesday','Wednesday','Thursday','Friday') NOT NULL,
+  `start_time` time NOT NULL,
+  `end_time` time NOT NULL,
+  `room` varchar(50) DEFAULT NULL,
+  `faculty` varchar(100) DEFAULT NULL,
+  `semester` varchar(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_schedule` (`course_code`,`section`,`day`,`start_time`,`end_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Table structure for table `suggested_routines`
+--
+
+CREATE TABLE `suggested_routines` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `student_id` int(11) NOT NULL,
+  `routine_name` varchar(100) NOT NULL,
+  `total_days` int(11) NOT NULL,
+  `max_classes_per_day` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `student_id` (`student_id`),
+  CONSTRAINT `suggested_routines_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Table structure for table `suggested_routine_courses`
+--
+
+CREATE TABLE `suggested_routine_courses` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `routine_id` int(11) NOT NULL,
+  `course_schedule_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `routine_id` (`routine_id`),
+  KEY `course_schedule_id` (`course_schedule_id`),
+  CONSTRAINT `suggested_routine_courses_ibfk_1` FOREIGN KEY (`routine_id`) REFERENCES `suggested_routines` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `suggested_routine_courses_ibfk_2` FOREIGN KEY (`course_schedule_id`) REFERENCES `course_schedules` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

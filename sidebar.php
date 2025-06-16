@@ -93,6 +93,15 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <span>Email Generator</span>
                 </a>
             </li>
+            <li>
+                <a href="routine_suggestor.php" class="nav-link <?php echo $current_page === 'routine_suggestor.php' ? 'active' : ''; ?>">
+                    <i class='bx bxs-calendar-check'></i>
+                    <span>Routine Suggestor</span>
+                </a>
+            </li>
+            <?php if ($sidebar_user['role'] === 'admin'): ?>
+            <!-- Admin Panel link removed for consistency; admin access is via admin_login.php and dedicated admin pages only. -->
+            <?php endif; ?>
         </ul>
     </div>
 

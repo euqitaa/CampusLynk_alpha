@@ -77,6 +77,7 @@
     <footer class="footer">
         <div class="container">
             <p class="text-muted text-sm">© 2024 CampusLynk. All rights reserved.</p>
+            <p class="text-sm mt-2"><a href="admin_login.php" class="text-primary hover:underline">Enter Mlobby</a></p>
         </div>
     </footer>
 </body>
