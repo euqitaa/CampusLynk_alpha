@@ -10,16 +10,22 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
             $database = new Database();
             $db = $database->getConnection();
             
-            $encd_pass = md5($pass);
+            $loginquery = $db->prepare("SELECT * FROM users WHERE email = ? AND role = 'student'");
+            $loginquery->execute([$email]);
             
-            $loginquery = $db->prepare("SELECT * FROM users WHERE email = ? AND password = ? AND role = 'student'");
-            $loginquery->execute([$email, $encd_pass]);
-            
-            if($loginquery->rowCount() == 1) {
-                session_start();
-                $_SESSION['useremail'] = $email;
-                header("Location: dashboard.php");
-                exit();
+            $user = $loginquery->fetch(PDO::FETCH_ASSOC);
+
+            if($user) {
+                // Verify password for either bcrypt or md5 for legacy support
+                if (password_verify($pass, $user['password']) || $user['password'] === md5($pass)) {
+                    session_start();
+                    $_SESSION['useremail'] = $user['email']; // Store the correct email from DB
+                    header("Location: dashboard.php");
+                    exit();
+                } else {
+                    header("Location: login.php?error=Invalid email or password");
+                    exit();
+                }
             } else {
                 header("Location: login.php?error=Invalid email or password");
                 exit();
