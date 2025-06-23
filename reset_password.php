@@ -73,16 +73,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="hidden" name="email" value="<?php echo htmlspecialchars($email); ?>">
                     <div class="form-group">
                         <label class="form-label">New Password</label>
-                        <div class="input-with-icon">
+                        <div class="input-with-icon" style="position:relative;">
                             <i class='bx bx-lock-alt'></i>
-                            <input type="password" name="new_password" required class="form-input" placeholder="Enter new password">
+                            <input type="password" name="new_password" id="reset-new-password" required class="form-input" placeholder="Enter new password">
+                            <button type="button" onclick="togglePassword('reset-new-password', this)" tabindex="-1" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer;">
+                                <i class='bx bx-show'></i>
+                            </button>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Confirm New Password</label>
-                        <div class="input-with-icon">
+                        <div class="input-with-icon" style="position:relative;">
                             <i class='bx bx-lock-alt'></i>
-                            <input type="password" name="confirm_password" required class="form-input" placeholder="Confirm new password">
+                            <input type="password" name="confirm_password" id="reset-confirm-password" required class="form-input" placeholder="Confirm new password">
+                            <button type="button" onclick="togglePassword('reset-confirm-password', this)" tabindex="-1" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer;">
+                                <i class='bx bx-show'></i>
+                            </button>
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary w-full">Reset Password</button>
@@ -95,4 +101,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
 </body>
+<script>
+function togglePassword(inputId, btn) {
+    const input = document.getElementById(inputId);
+    const icon = btn.querySelector('i');
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('bx-show');
+        icon.classList.add('bx-hide');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('bx-hide');
+        icon.classList.add('bx-show');
+    }
+}
+</script>
 </html> 

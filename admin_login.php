@@ -16,6 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         if ($admin && (password_verify($password, $admin['password']) || $admin['password'] === md5($password))) {
             $_SESSION['admin_email'] = $admin['email'];
+            $_SESSION['useremail'] = $admin['email'];
             $_SESSION['admin_id'] = $admin['id'];
             header('Location: admin_dashboard.php');
             exit();
@@ -40,6 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="css/components.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 <body class="auth-page">
     <div class="auth-container">
@@ -77,9 +79,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     
                     <div class="form-group">
                         <label class="form-label">Password</label>
-                        <div class="input-with-icon">
+                        <div class="input-with-icon password-with-toggle">
                             <i class='bx bx-lock-alt'></i>
-                            <input type="password" name="password" required class="form-input" placeholder="Enter your password">
+                            <input type="password" name="password" id="admin-login-password" required class="form-input" placeholder="Enter your password">
+                            <button type="button" class="password-toggle-btn" onclick="togglePassword('admin-login-password', this)" tabindex="-1">
+                                <i class='bx bx-show'></i>
+                            </button>
                         </div>
                     </div>
                     
@@ -89,4 +94,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
 </body>
+<style>
+.password-with-toggle {
+    position: relative;
+}
+.password-toggle-btn {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    color: #64748b;
+    height: 2.5rem;
+    width: 2.5rem;
+    z-index: 2;
+}
+.password-toggle-btn:focus {
+    outline: none;
+}
+.password-toggle-btn i {
+    font-size: 1.25rem;
+    transition: color 0.2s;
+}
+.password-toggle-btn:hover i {
+    color: #0066cc;
+}
+.password-with-toggle .form-input {
+    padding-right: 2.5rem;
+}
+</style>
+<script>
+function togglePassword(inputId, btn) {
+    const input = document.getElementById(inputId);
+    const icon = btn.querySelector('i');
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('bx-show');
+        icon.classList.add('bx-hide');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('bx-hide');
+        icon.classList.add('bx-show');
+    }
+}
+</script>
 </html> 

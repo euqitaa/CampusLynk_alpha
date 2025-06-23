@@ -90,15 +90,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <div class="form-group mb-4">
                 <label class="form-label">Password</label>
-                <input type="password" name="password" class="form-input w-full" required minlength="8">
+                <div style="position:relative;">
+                    <input type="password" name="password" id="admin-register-password" class="form-input w-full" required minlength="8">
+                    <button type="button" onclick="togglePassword('admin-register-password', this)" tabindex="-1" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer;">
+                        <i class='bx bx-show'></i>
+                    </button>
+                </div>
             </div>
             <div class="form-group mb-6">
                 <label class="form-label">Confirm Password</label>
-                <input type="password" name="confirm_password" class="form-input w-full" required minlength="8">
+                <div style="position:relative;">
+                    <input type="password" name="confirm_password" id="admin-register-confirm-password" class="form-input w-full" required minlength="8">
+                    <button type="button" onclick="togglePassword('admin-register-confirm-password', this)" tabindex="-1" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer;">
+                        <i class='bx bx-show'></i>
+                    </button>
+                </div>
             </div>
             <button type="submit" class="btn btn-primary w-full">Register</button>
         </form>
         <p class="text-center mt-4"><a href="admin_login.php" class="text-primary hover:underline">Back to Admin Login</a></p>
     </main>
 </body>
+<script>
+function togglePassword(inputId, btn) {
+    const input = document.getElementById(inputId);
+    const icon = btn.querySelector('i');
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('bx-show');
+        icon.classList.add('bx-hide');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('bx-hide');
+        icon.classList.add('bx-show');
+    }
+}
+</script>
 </html> 

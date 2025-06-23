@@ -51,9 +51,12 @@
                     
                     <div class="form-group">
                         <label class="form-label">Password</label>
-                        <div class="input-with-icon">
+                        <div class="input-with-icon" style="position:relative;">
                             <i class='bx bx-lock-alt'></i>
-                            <input type="password" name="mypass" required class="form-input" placeholder="Enter your password">
+                            <input type="password" name="mypass" id="login-password" required class="form-input" placeholder="Enter your password">
+                            <button type="button" onclick="togglePassword('login-password', this)" tabindex="-1" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer;">
+                                <i class='bx bx-show'></i>
+                            </button>
                         </div>
                     </div>
                     <div class="forgot-password-link" style="text-align:right; margin-bottom:10px;">
@@ -70,4 +73,19 @@
         </div>
     </div>
 </body>
+<script>
+function togglePassword(inputId, btn) {
+    const input = document.getElementById(inputId);
+    const icon = btn.querySelector('i');
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('bx-show');
+        icon.classList.add('bx-hide');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('bx-hide');
+        icon.classList.add('bx-show');
+    }
+}
+</script>
 </html>
