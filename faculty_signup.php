@@ -45,7 +45,12 @@
                 
                 <div class="form-group">
                     <label class="form-label">🔒 Password</label>
-                    <input type="password" name="mypass" required class="form-input" minlength="8" maxlength="20">
+                    <div style="position:relative;">
+                        <input type="password" name="mypass" id="faculty-signup-password" required class="form-input" minlength="8" maxlength="20">
+                        <button type="button" onclick="togglePassword('faculty-signup-password', this)" tabindex="-1" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer;">
+                            <i class='bx bx-show'></i>
+                        </button>
+                    </div>
                 </div>
                 
                 <button type="submit" class="btn btn-primary">Sign Up</button>
@@ -57,4 +62,19 @@
         </div>
     </main>
 </body>
+<script>
+function togglePassword(inputId, btn) {
+    const input = document.getElementById(inputId);
+    const icon = btn.querySelector('i');
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('bx-show');
+        icon.classList.add('bx-hide');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('bx-hide');
+        icon.classList.add('bx-show');
+    }
+}
+</script>
 </html>

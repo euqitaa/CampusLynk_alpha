@@ -76,17 +76,23 @@
                     
                     <div class="form-group">
                         <label class="form-label">Password</label>
-                        <div class="input-with-icon">
+                        <div class="input-with-icon" style="position:relative;">
                             <i class='bx bx-lock-alt'></i>
-                            <input type="password" name="password" required class="form-input" placeholder="Create a password">
+                            <input type="password" name="password" id="signup-password" required class="form-input" placeholder="Create a password">
+                            <button type="button" onclick="togglePassword('signup-password', this)" tabindex="-1" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer;">
+                                <i class='bx bx-show'></i>
+                            </button>
                         </div>
                     </div>
                     
                     <div class="form-group">
                         <label class="form-label">Confirm Password</label>
-                        <div class="input-with-icon">
+                        <div class="input-with-icon" style="position:relative;">
                             <i class='bx bx-lock-alt'></i>
-                            <input type="password" name="password2" required class="form-input" placeholder="Confirm your password">
+                            <input type="password" name="password2" id="signup-password2" required class="form-input" placeholder="Confirm your password">
+                            <button type="button" onclick="togglePassword('signup-password2', this)" tabindex="-1" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer;">
+                                <i class='bx bx-show'></i>
+                            </button>
                         </div>
                     </div>
                     
@@ -100,4 +106,19 @@
         </div>
     </div>
 </body>
+<script>
+function togglePassword(inputId, btn) {
+    const input = document.getElementById(inputId);
+    const icon = btn.querySelector('i');
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('bx-show');
+        icon.classList.add('bx-hide');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('bx-hide');
+        icon.classList.add('bx-show');
+    }
+}
+</script>
 </html>
