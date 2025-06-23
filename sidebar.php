@@ -70,6 +70,12 @@ $role = $sidebar_user['role'];
                     </a>
                 </li>
                 <li>
+                    <a href="admin_class_schedule.php" class="nav-link <?php echo $current_page === 'admin_class_schedule.php' ? 'active' : ''; ?>">
+                        <i class='bx bx-calendar'></i>
+                        <span>Ongoing Class Schedule</span>
+                    </a>
+                </li>
+                <li>
                     <a href="admin_users.php" class="nav-link <?php echo $current_page === 'admin_users.php' ? 'active' : ''; ?>">
                         <i class='bx bxs-user-detail'></i>
                         <span>User Management</span>

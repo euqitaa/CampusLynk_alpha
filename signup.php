@@ -66,11 +66,17 @@
                         <label class="form-label">Role</label>
                         <div class="input-with-icon">
                             <i class='bx bx-user-pin'></i>
-                            <select name="role" required class="form-input">
-                                <option value="">Select your role</option>
+                            <select name="role" id="role" class="form-input" required onchange="toggleStudentIdField()">
                                 <option value="student">Student</option>
-                                <option value="teacher">Teacher</option>
+                                <option value="faculty">Faculty</option>
                             </select>
+                        </div>
+                    </div>
+                    <div class="form-group" id="student-id-group" style="display:none;">
+                        <label class="form-label">University ID</label>
+                        <div class="input-with-icon">
+                            <i class='bx bx-id-card'></i>
+                            <input type="text" name="university_id" id="university_id" class="form-input" pattern="0[0-9]{8,}" maxlength="20" placeholder="e.g. 011221521">
                         </div>
                     </div>
                     
@@ -120,5 +126,13 @@ function togglePassword(inputId, btn) {
         icon.classList.add('bx-show');
     }
 }
+function toggleStudentIdField() {
+    var role = document.getElementById('role').value;
+    var group = document.getElementById('student-id-group');
+    group.style.display = (role === 'student') ? 'block' : 'none';
+}
+document.addEventListener('DOMContentLoaded', function() {
+    toggleStudentIdField();
+});
 </script>
 </html>

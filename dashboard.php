@@ -166,20 +166,26 @@ if (isset($_SESSION['department']) && isset($_SESSION['section'])) {
                 <form action="enroll.php" method="POST" id="enroll-form" class="form-grid">
                     <div class="form-group">
                         <label for="course" class="form-label">Course</label>
-                        <select name="course_code" id="course" class="form-input">
-                            <option value="">-- Select a Course --</option>
-                            <?php foreach ($courses as $course): ?>
-                                <option value="<?php echo htmlspecialchars($course['course_code']); ?>">
-                                    <?php echo htmlspecialchars($course['course_title']) . ' (' . htmlspecialchars($course['course_code']) . ')'; ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
+                        <div class="input-with-icon">
+                            <i class='bx bx-book'></i>
+                            <select name="course_code" id="course" class="form-input">
+                                <option value="">-- Select a Course --</option>
+                                <?php foreach ($courses as $course): ?>
+                                    <option value="<?php echo htmlspecialchars($course['course_code']); ?>">
+                                        <?php echo htmlspecialchars($course['course_title']) . ' (' . htmlspecialchars($course['course_code']) . ')'; ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="section" class="form-label">Section</label>
-                        <select name="section" id="section" class="form-input" disabled>
-                            <option value="">-- Select a Course First --</option>
-                        </select>
+                        <div class="input-with-icon">
+                            <i class='bx bx-grid'></i>
+                            <select name="section" id="section" class="form-input" disabled>
+                                <option value="">-- Select a Course First --</option>
+                            </select>
+                        </div>
                     </div>
                     <button type="submit" class="btn btn-primary btn-block">Enroll</button>
                 </form>

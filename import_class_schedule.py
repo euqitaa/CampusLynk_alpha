@@ -4,8 +4,8 @@ import mysql.connector
 import os
 import re
 
-PDF_PATH = os.path.join('uploads', 'schedule_import.pdf')
-CSV_PATH = os.path.join('uploads', 'schedule_import.csv')
+PDF_PATH = os.path.join('uploads', 'class_schedule_import.pdf')
+CSV_PATH = os.path.join('uploads', 'class_schedule_import.csv')
 
 # MySQL connection config
 DB_CONFIG = {
@@ -55,7 +55,6 @@ def extract_table_from_pdf(pdf_path, csv_path):
                 for row in table[1:]:  # skip header row
                     if len(row) >= 14:
                         cleaned = [clean_field(cell) for cell in row[1:14]]
-                        # Clean section field specifically
                         cleaned[3] = clean_section(cleaned[3])
                         writer.writerow(cleaned)
                         rows_written += 1
@@ -66,7 +65,7 @@ def import_csv_to_mysql(csv_path, db_config):
     cursor = conn.cursor()
     # Disable foreign key checks, delete, then re-enable
     cursor.execute('SET FOREIGN_KEY_CHECKS=0')
-    cursor.execute('DELETE FROM course_schedules')
+    cursor.execute('DELETE FROM upcoming_courses')
     cursor.execute('SET FOREIGN_KEY_CHECKS=1')
     with open(csv_path, newline='', encoding='utf-8') as csvfile:
         reader = csv.reader(csvfile)
@@ -74,13 +73,12 @@ def import_csv_to_mysql(csv_path, db_config):
         for row in reader:
             if len(row) < 13:
                 continue
-            # Clean section again before insert (safety)
             row = list(row)
             row[3] = clean_section(row[3])
             try:
                 cursor.execute(
                     """
-                    INSERT IGNORE INTO course_schedules
+                    INSERT IGNORE INTO upcoming_courses
                     (program, course_code, course_title, section, room1, room2, day1, day2, time1, time2, faculty_name, faculty_initial, credit)
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                     """,

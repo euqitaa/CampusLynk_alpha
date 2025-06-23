@@ -179,72 +179,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_courses'])) 
     <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="css/components.css">
     <style>
-        .course-selection {
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
-        }
-        
-        .course-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-        
-        .course-item {
-            display: flex;
-            align-items: center;
-            padding: 0.5rem;
-            border: 1px solid #e2e8f0;
-            border-radius: 4px;
-        }
-        
-        .course-item input[type="checkbox"] {
-            margin-right: 0.5rem;
-        }
-        
-        .suggested-routine {
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .routine-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-        }
-        
-        .routine-table th,
-        .routine-table td {
-            padding: 0.75rem;
-            border: 1px solid #e2e8f0;
-            text-align: left;
-        }
-        
-        .routine-table th {
-            background: #f8fafc;
-            font-weight: 600;
-        }
-        
-        .submit-btn {
-            background: #4f46e5;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 500;
-            margin-top: 1rem;
-        }
-        
-        .submit-btn:hover {
-            background: #4338ca;
-        }
+        .shadcn-card { background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); padding: 2rem; margin-bottom: 2rem; }
+        .shadcn-label { font-weight: 600; margin-bottom: 0.5rem; display: block; }
+        .shadcn-search { width: 100%; padding: 0.75rem 1rem; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 1rem; margin-bottom: 1rem; }
+        .shadcn-dropdown { max-height: 200px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 8px; background: #fff; position: absolute; width: 100%; z-index: 10; }
+        .shadcn-dropdown-item { padding: 0.5rem 1rem; cursor: pointer; }
+        .shadcn-dropdown-item:hover { background: #f3f4f6; }
+        .shadcn-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+        .shadcn-chip { background: #f3f4f6; border-radius: 999px; padding: 0.4rem 1rem; display: flex; align-items: center; font-size: 0.95rem; }
+        .shadcn-chip-remove { margin-left: 0.5rem; color: #888; cursor: pointer; font-size: 1.1rem; }
+        .shadcn-btn { background: #111827; color: #fff; border: none; border-radius: 8px; padding: 0.7rem 1.5rem; font-weight: 600; font-size: 1rem; cursor: pointer; transition: background 0.2s; }
+        .shadcn-btn:hover { background: #374151; }
+        .routine-table { width: 100%; border-collapse: collapse; margin-top: 2rem; }
+        .routine-table th, .routine-table td { border: 1px solid #e5e7eb; padding: 0.5rem 1rem; text-align: left; }
+        .routine-table th { background: #f9fafb; }
+        .routine-alternatives { margin-top: 2rem; }
+        .routine-alternatives h3 { margin-bottom: 1rem; }
     </style>
 </head>
 <body>
@@ -256,60 +206,81 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_courses'])) 
             <p class="text-muted">Select your courses and get the best possible routine</p>
         </section>
 
-        <form method="POST" action="">
-            <div class="course-selection">
-                <h2>Select Your Courses</h2>
-                <div class="course-list">
-                    <?php foreach ($courses as $course): ?>
-                        <div class="course-item">
-                            <input type="checkbox" name="selected_courses[]" value="<?php echo htmlspecialchars($course['course_code']); ?>" id="course_<?php echo htmlspecialchars($course['course_code']); ?>">
-                            <label for="course_<?php echo htmlspecialchars($course['course_code']); ?>">
-                                <?php echo htmlspecialchars($course['course_code'] . ' - ' . $course['course_title']); ?>
-                            </label>
-                        </div>
-                    <?php endforeach; ?>
+        <div class="shadcn-card">
+            <form id="routineForm" method="post">
+                <label class="shadcn-label">Select Courses</label>
+                <div style="position:relative; max-width:500px;">
+                    <input type="text" id="courseSearch" class="shadcn-search" placeholder="Search and select courses..." autocomplete="off">
+                    <div id="dropdown" class="shadcn-dropdown" style="display:none;"></div>
                 </div>
-                <button type="submit" class="submit-btn">Generate Routine</button>
-            </div>
-        </form>
+                <div class="shadcn-chips" id="selectedChips"></div>
+                <button type="submit" class="shadcn-btn">Generate Routine</button>
+            </form>
+        </div>
 
-        <?php if (isset($suggested_routines) && !empty($suggested_routines)): ?>
-            <div class="suggested-routine">
+        <div id="routineResults">
+            <?php if (isset($suggested_routines) && !empty($suggested_routines)): ?>
                 <h2>Best Suggested Routine</h2>
-                <p>Total Days: <?php echo $suggested_routines[0]['total_days']; ?></p>
-                <p>Maximum Classes per Day: <?php echo $suggested_routines[0]['max_classes_per_day']; ?></p>
+                <?php $best = $suggested_routines[0]; ?>
                 <table class="routine-table">
                     <thead>
                         <tr>
-                            <th>Program</th>
-                            <th>Course</th>
-                            <th>Section</th>
-                            <th>Room(s)</th>
-                            <th>Day(s)</th>
-                            <th>Time(s)</th>
-                            <th>Faculty Name</th>
-                            <th>Faculty Initial</th>
-                            <th>Credit</th>
+                            <th>Course</th><th>Section</th><th>Room 1</th><th>Room 2</th><th>Day 1</th><th>Time 1</th><th>Day 2</th><th>Time 2</th><th>Faculty</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($suggested_routines[0]['schedules'] as $schedule): ?>
-                            <tr>
-                                <td><?php echo htmlspecialchars($schedule['program']); ?></td>
-                                <td><?php echo htmlspecialchars($schedule['course_code'] . ' - ' . $schedule['course_title']); ?></td>
-                                <td><?php echo htmlspecialchars($schedule['section']); ?></td>
-                                <td><?php echo htmlspecialchars($schedule['room1']); ?><?php if (!empty($schedule['room2'])) echo ', ' . htmlspecialchars($schedule['room2']); ?></td>
-                                <td><?php echo htmlspecialchars($schedule['day1']); ?><?php if (!empty($schedule['day2'])) echo ', ' . htmlspecialchars($schedule['day2']); ?></td>
-                                <td><?php echo htmlspecialchars($schedule['time1']); ?><?php if (!empty($schedule['time2'])) echo ', ' . htmlspecialchars($schedule['time2']); ?></td>
-                                <td><?php echo htmlspecialchars($schedule['faculty_name']); ?></td>
-                                <td><?php echo htmlspecialchars($schedule['faculty_initial']); ?></td>
-                                <td><?php echo htmlspecialchars($schedule['credit']); ?></td>
-                            </tr>
-                        <?php endforeach; ?>
+                    <?php foreach ($best['schedules'] as $row): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($row['course_code']); ?></td>
+                            <td><?php echo htmlspecialchars($row['section']); ?></td>
+                            <td><?php echo htmlspecialchars($row['room1']); ?></td>
+                            <td><?php echo htmlspecialchars($row['room2']); ?></td>
+                            <td><?php echo htmlspecialchars($row['day1']); ?></td>
+                            <td><?php echo htmlspecialchars($row['time1']); ?></td>
+                            <td><?php echo htmlspecialchars($row['day2']); ?></td>
+                            <td><?php echo htmlspecialchars($row['time2']); ?></td>
+                            <td><?php echo htmlspecialchars($row['faculty_name']); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
                     </tbody>
                 </table>
-            </div>
-        <?php endif; ?>
+                <?php if (count($suggested_routines) > 1): ?>
+                <div class="routine-alternatives">
+                    <h3>Other Possible Routines</h3>
+                    <?php for ($i = 1; $i < min(6, count($suggested_routines)); $i++): ?>
+                        <table class="routine-table" style="margin-bottom:1.5rem;">
+                            <thead>
+                                <tr>
+                                    <th>Course</th><th>Section</th><th>Room 1</th><th>Room 2</th><th>Day 1</th><th>Time 1</th><th>Day 2</th><th>Time 2</th><th>Faculty</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <?php foreach ($suggested_routines[$i]['schedules'] as $row): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($row['course_code']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['section']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['room1']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['room2']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['day1']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['time1']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['day2']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['time2']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['faculty_name']); ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    <?php endfor; ?>
+                </div>
+                <?php endif; ?>
+            <?php endif; ?>
+        </div>
     </main>
+
+    <script>
+    // Inject allCourses for JS file
+    window.allCourses = <?php echo json_encode($courses); ?>;
+    </script>
+    <script src="js/routine_suggestor.js"></script>
 </body>
 </html> 
