@@ -3,6 +3,8 @@ as python script is added, you might need to install python. then install these 
 
 pip install mysql-connector-python
 pip install pdfplumber
+pip install pandas
+
 
 after that restart everything run project it will work.
 accordingly next plan is to upgrade the exam schedule importing and current class schedule.
