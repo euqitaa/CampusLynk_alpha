@@ -1,5 +1,7 @@
 {
     "require": {
-        "phpmailer/phpmailer": "*"
+        "phpmailer/phpmailer": "*",
+        "smalot/pdfparser": "^2.0",
+        "phpoffice/phpspreadsheet": "^1.29"
     }
 }
