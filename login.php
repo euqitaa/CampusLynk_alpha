@@ -56,6 +56,9 @@
                             <input type="password" name="mypass" required class="form-input" placeholder="Enter your password">
                         </div>
                     </div>
+                    <div class="forgot-password-link" style="text-align:right; margin-bottom:10px;">
+                        <a href="forgot_password.php" class="text-primary font-medium">Forgot Password?</a>
+                    </div>
                     
                     <button type="submit" class="btn btn-primary w-full">Sign In</button>
                     

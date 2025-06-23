@@ -10,7 +10,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
             $database = new Database();
             $db = $database->getConnection();
             
-            $loginquery = $db->prepare("SELECT * FROM users WHERE email = ? AND role = 'student'");
+            $loginquery = $db->prepare("SELECT * FROM users WHERE email = ?");
             $loginquery->execute([$email]);
             
             $user = $loginquery->fetch(PDO::FETCH_ASSOC);
@@ -20,8 +20,19 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
                 if (password_verify($pass, $user['password']) || $user['password'] === md5($pass)) {
                     session_start();
                     $_SESSION['useremail'] = $user['email']; // Store the correct email from DB
-                    header("Location: dashboard.php");
-                    exit();
+                    if ($user['role'] === 'student') {
+                        header("Location: dashboard.php");
+                        exit();
+                    } elseif ($user['role'] === 'faculty') {
+                        header("Location: faculty_dashboard.php");
+                        exit();
+                    } elseif ($user['role'] === 'admin') {
+                        header("Location: admin_dashboard.php");
+                        exit();
+                    } else {
+                        header("Location: login.php?error=Unknown user role");
+                        exit();
+                    }
                 } else {
                     header("Location: login.php?error=Invalid email or password");
                     exit();

@@ -15,7 +15,7 @@ try {
     $database = new Database();
     $db = $database->getConnection();
     
-    $query = $db->prepare("SELECT * FROM faculty WHERE email = ?");
+    $query = $db->prepare("SELECT * FROM users WHERE email = ? AND role = 'faculty'");
     $query->execute([$_SESSION['useremail']]);
     $faculty = $query->fetch(PDO::FETCH_ASSOC);
     
@@ -25,16 +25,16 @@ try {
         exit();
     }
     
-    // Fetch active courses
-    $courses_query = "SELECT * FROM courses WHERE faculty_id = ?";
+    // Fetch active courses for this faculty
+    $courses_query = "SELECT * FROM course_schedules WHERE faculty_name = ?";
     $courses_stmt = $db->prepare($courses_query);
-    $courses_stmt->execute([$faculty['id']]);
+    $courses_stmt->execute([$faculty['name']]);
     $courses = $courses_stmt->fetchAll(PDO::FETCH_ASSOC);
     
-    // Count total students
-    $students_query = "SELECT COUNT(DISTINCT student_id) as total FROM course_enrollments WHERE course_id IN (SELECT id FROM courses WHERE faculty_id = ?)";
+    // Count total students (count distinct section+course_code for this faculty)
+    $students_query = "SELECT COUNT(DISTINCT section, course_code) as total FROM course_schedules WHERE faculty_name = ?";
     $students_stmt = $db->prepare($students_query);
-    $students_stmt->execute([$faculty['id']]);
+    $students_stmt->execute([$faculty['name']]);
     $total_students = $students_stmt->fetch(PDO::FETCH_ASSOC)['total'];
     
 } catch (PDOException $e) {

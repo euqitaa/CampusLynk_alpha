@@ -1,47 +1,41 @@
 <?php
+require_once 'config/database.php';
+
 if($_SERVER['REQUEST_METHOD'] == "POST") {
     if(isset($_POST['myemail']) && isset($_POST['mypass'])) {
-
         $email = $_POST['myemail'];
-
         $pass = $_POST['mypass'];
         try {
-            $conn = new PDO("mysql:host=localhost:3306;dbname=student_companion;", "root", "");
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-            $encd_pass = md5($pass);
-
-            $loginquery = "SELECT * FROM faculty WHERE email='$email' AND password='$encd_pass'";
-            $returnobj = $conn->query($loginquery);
-            
-            if($returnobj->rowCount() == 1) {
-                session_start();
-                $_SESSION['useremail'] = $email;
-
-                ?>
-                <script>location.assign("faculty_dashboard.php");</script>
-                <?php
+            $database = new Database();
+            $db = $database->getConnection();
+            $loginquery = $db->prepare("SELECT * FROM users WHERE email = ? AND role = 'faculty'");
+            $loginquery->execute([$email]);
+            $user = $loginquery->fetch(PDO::FETCH_ASSOC);
+            if($user) {
+                // Support both bcrypt and md5
+                if (password_verify($pass, $user['password']) || $user['password'] === md5($pass)) {
+                    session_start();
+                    $_SESSION['useremail'] = $user['email'];
+                    header("Location: faculty_dashboard.php");
+                    exit();
+                } else {
+                    header("Location: faculty_login.php?error=Invalid email or password");
+                    exit();
+                }
             } else {
-                ?>
-                <script>location.assign("faculty_login.php")</script>
-                <?php
+                header("Location: faculty_login.php?error=Invalid email or password");
+                exit();
             }
-
-
         } catch (PDOException $ex) {
-            ?>
-            <script>location.assign("faculty_login.php")</script>
-            <?php
+            header("Location: faculty_login.php?error=Database Error: " . urlencode($ex->getMessage()));
+            exit();
         }
     } else {
-        ?>
-        <script>location.assign("faculty_login.php")</script>
-        <?php
+        header("Location: faculty_login.php?error=Please fill in all fields");
+        exit();
     }
-
 } else {
-    ?>
-    <script>location.assign("login.php")</script>
-    <?php
+    header("Location: faculty_login.php");
+    exit();
 }
 ?>

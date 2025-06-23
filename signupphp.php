@@ -9,6 +9,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $email = $_POST['email'];
         $password = $_POST['password'];
         $role = $_POST['role'];
+        if ($role === 'teacher') {
+            $role = 'faculty';
+        }
 
         $database = new Database();
         $db = $database->getConnection();
@@ -36,7 +39,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 exit();
             }
             
-            $enr_pass = md5($password);
+            // Use bcrypt for new passwords
+            $enr_pass = password_hash($password, PASSWORD_DEFAULT);
             $signupquery = $db->prepare("INSERT INTO users (username, email, password, role, name) VALUES (?, ?, ?, ?, ?)");
             $signupquery->execute([$username, $email, $enr_pass, $role, $name]);
             
