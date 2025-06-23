@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 23, 2025 at 02:15 PM
+-- Generation Time: Jun 23, 2025 at 07:15 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -806,6 +806,25 @@ INSERT INTO `events` (`id`, `title`, `description`, `date`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `exam_schedules`
+--
+
+CREATE TABLE `exam_schedules` (
+  `id` int(11) NOT NULL,
+  `department` varchar(50) NOT NULL,
+  `course_code` varchar(50) NOT NULL,
+  `course_title` varchar(255) NOT NULL,
+  `section` varchar(10) NOT NULL,
+  `teacher` varchar(100) NOT NULL,
+  `exam_date` date NOT NULL,
+  `exam_time` varchar(50) NOT NULL,
+  `room` varchar(255) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `faculty`
 --
 
@@ -848,21 +867,6 @@ INSERT INTO `student_enrollments` (`id`, `student_id`, `course_id`, `section`) V
 (33, 9, 143, 'A'),
 (34, 9, 17, 'AA'),
 (35, 8, 59, 'A');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `study_materials`
---
-
-CREATE TABLE `study_materials` (
-  `id` int(11) NOT NULL,
-  `title` varchar(255) NOT NULL,
-  `description` text DEFAULT NULL,
-  `file_path` varchar(255) NOT NULL,
-  `course_id` int(11) NOT NULL,
-  `uploaded_by` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -1771,7 +1775,7 @@ INSERT INTO `users` (`id`, `username`, `email`, `password`, `role`, `name`) VALU
 (2, 'ibrahim', 'ibrahim@gmail.com', '$2b$10$lDC3I5E4AzqYsVpj2aEN7OwEi7uB8jfZI9sgfN2iCQHgtnqNgwnEe', 'student', 'sayed ibrahim'),
 (3, 'mahatab', 'mahatab@gmail.com', '$2b$10$8FRcX.AcMXZjLBDSL1jxbOk.iN6Q5At.qVJS7W/jjIjfyIsNFO9uO', 'faculty', 'mahatab uddin'),
 (8, 'atq444', 'atq@gmail.com', '$2y$10$t45yRAA6cRo0Qn9XPNRLZuN0YNRWSYXYmfKpk7nyH0MlyeVSJj5vu', 'student', 'Atique'),
-(9, '011221521', 'ilham@gmail.com', '$2y$10$kSDdqvl2lIZLq7kcAMzCIexCXCZcizKz9.rcHf1hA3Zy4EmILyB06', 'student', 'ilham'),
+(9, '011221521', 'ilham@gmail.com', '$2y$10$1dguu1v5DYvpMPMWYKG/1uEwqg5Kht9VUK82x9RYyeUV8bgztazJS', 'student', 'ilham'),
 (10, 'emad@gmail.com', 'emad@gmail.com', '432ea5027f47027281a2e5f373e5edf6', 'student', 'emad'),
 (11, 'autumnsimp', 'emad200105@gmail.com', 'a8fa0b55df1ff8ba3c086dbcfc305d4a', 'student', 'Hasnat Emad'),
 (12, 'KK', 'a@gmail.com', 'a8fa0b55df1ff8ba3c086dbcfc305d4a', 'student', 'Md. Abu Hasnat'),
@@ -1814,6 +1818,12 @@ ALTER TABLE `events`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `exam_schedules`
+--
+ALTER TABLE `exam_schedules`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `faculty`
 --
 ALTER TABLE `faculty`
@@ -1826,13 +1836,6 @@ ALTER TABLE `student_enrollments`
   ADD PRIMARY KEY (`id`),
   ADD KEY `student_id` (`student_id`),
   ADD KEY `course_id` (`course_id`);
-
---
--- Indexes for table `study_materials`
---
-ALTER TABLE `study_materials`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `uploaded_by` (`uploaded_by`);
 
 --
 -- Indexes for table `upcoming_courses`
@@ -1882,6 +1885,12 @@ ALTER TABLE `events`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT for table `exam_schedules`
+--
+ALTER TABLE `exam_schedules`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `faculty`
 --
 ALTER TABLE `faculty`
@@ -1892,12 +1901,6 @@ ALTER TABLE `faculty`
 --
 ALTER TABLE `student_enrollments`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
-
---
--- AUTO_INCREMENT for table `study_materials`
---
-ALTER TABLE `study_materials`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `upcoming_courses`
@@ -1927,12 +1930,6 @@ ALTER TABLE `counselling_times`
 ALTER TABLE `student_enrollments`
   ADD CONSTRAINT `student_enrollments_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `student_enrollments_ibfk_2` FOREIGN KEY (`course_id`) REFERENCES `upcoming_courses` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `study_materials`
---
-ALTER TABLE `study_materials`
-  ADD CONSTRAINT `study_materials_ibfk_1` FOREIGN KEY (`uploaded_by`) REFERENCES `users` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
