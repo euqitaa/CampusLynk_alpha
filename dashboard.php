@@ -31,6 +31,32 @@ try {
     exit();
 }
 
+// Exam Schedule Section for Students
+if (isset($_SESSION['department']) && isset($_SESSION['section'])) {
+    $db = new Database();
+    $conn = $db->getConnection();
+    $stmt = $conn->prepare("SELECT * FROM exam_schedules WHERE department = ? AND section = ? ORDER BY exam_date, exam_time");
+    $stmt->execute([$_SESSION['department'], $_SESSION['section']]);
+    $examSchedules = $stmt->fetchAll();
+    if ($examSchedules) {
+        echo '<h2>Your Exam Schedule</h2>';
+        echo '<table border="1"><tr><th>Course Code</th><th>Course Title</th><th>Teacher</th><th>Exam Date</th><th>Exam Time</th><th>Room</th></tr>';
+        foreach ($examSchedules as $exam) {
+            echo '<tr>';
+            echo '<td>' . htmlspecialchars($exam['course_code']) . '</td>';
+            echo '<td>' . htmlspecialchars($exam['course_title']) . '</td>';
+            echo '<td>' . htmlspecialchars($exam['teacher']) . '</td>';
+            echo '<td>' . htmlspecialchars($exam['exam_date']) . '</td>';
+            echo '<td>' . htmlspecialchars($exam['exam_time']) . '</td>';
+            echo '<td>' . htmlspecialchars($exam['room']) . '</td>';
+            echo '</tr>';
+        }
+        echo '</table>';
+    } else {
+        echo '<h2>Your Exam Schedule</h2><p>No exam schedule found.</p>';
+    }
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
