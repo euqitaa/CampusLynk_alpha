@@ -22,20 +22,21 @@ try {
     if ($user) {
         $userId = $user['id'];
 
-        // Fetch the student's exam schedule by joining enrollments with exam tables
+        // Fetch the student's exam schedule by joining enrollments with exam_schedules
         $examQuery = "
             SELECT 
-                ex.course_title,
-                ex.course_code,
-                ex.date,
-                ex.day,
-                ex.time,
-                ex.section
+                es.course_title,
+                es.course_code,
+                es.exam_date,
+                es.exam_time,
+                es.section,
+                es.room,
+                es.teacher
             FROM student_enrollments se
             JOIN upcoming_courses uc ON se.course_id = uc.id
-            JOIN cse_exams ex ON uc.course_code = ex.course_code AND se.section = ex.section
+            JOIN exam_schedules es ON es.course_code = uc.course_code AND es.section = se.section
             WHERE se.student_id = ?
-            ORDER BY ex.date, ex.time
+            ORDER BY es.exam_date, es.exam_time
         ";
         
         $examStmt = $db->prepare($examQuery);
@@ -80,9 +81,9 @@ try {
                         <th>Course</th>
                         <th>Code</th>
                         <th>Date</th>
-                        <th>Day</th>
                         <th>Time</th>
                         <th>Section</th>
+                        <th>Room</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -91,10 +92,10 @@ try {
                             <tr>
                                 <td><?php echo htmlspecialchars($exam['course_title']); ?></td>
                                 <td><?php echo htmlspecialchars($exam['course_code']); ?></td>
-                                <td class="exam-date"><?php echo date('M j, Y', strtotime($exam['date'])); ?></td>
-                                <td><?php echo htmlspecialchars($exam['day']); ?></td>
-                                <td class="exam-time"><?php echo htmlspecialchars(substr($exam['time'], 0, 5)); ?></td>
+                                <td class="exam-date"><?php echo date('M j, Y', strtotime($exam['exam_date'])); ?></td>
+                                <td><?php echo htmlspecialchars($exam['exam_time']); ?></td>
                                 <td><?php echo htmlspecialchars($exam['section']); ?></td>
+                                <td><?php echo htmlspecialchars($exam['room']); ?></td>
                             </tr>
                         <?php endforeach; ?>
                     <?php else: ?>

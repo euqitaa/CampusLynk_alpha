@@ -63,7 +63,7 @@ try {
 </head>
 <body>
     <?php include 'sidebar.php'; ?>
-    <main class="admin-content">
+    <main class="main-content">
         <div class="admin-header">
             <div>
                 <h1 class="text-2xl font-bold">User Management</h1>
@@ -77,7 +77,7 @@ try {
                     <div class="alert alert-success mb-4"><?php echo htmlspecialchars($actionMsg); ?></div>
                 <?php endif; ?>
                 <div style="overflow-x:auto;">
-                <table class="table" style="width:100%; min-width:600px;">
+                <table class="table" style="min-width:900px;">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -93,11 +93,11 @@ try {
                         <tr>
                             <form method="POST" style="display:contents;">
                                 <td><?php echo $user['id']; ?></td>
-                                <td><input type="text" name="edit_name" value="<?php echo htmlspecialchars($user['name']); ?>" style="width:120px;"></td>
+                                <td><input type="text" name="edit_name" value="<?php echo htmlspecialchars($user['name']); ?>" class="form-input" style="width:120px;"></td>
                                 <td><?php echo htmlspecialchars($user['username']); ?></td>
-                                <td><input type="email" name="edit_email" value="<?php echo htmlspecialchars($user['email']); ?>" style="width:180px;"></td>
+                                <td><input type="email" name="edit_email" value="<?php echo htmlspecialchars($user['email']); ?>" class="form-input" style="width:180px;"></td>
                                 <td>
-                                    <select name="edit_role">
+                                    <select name="edit_role" class="form-select">
                                         <option value="student" <?php if($user['role']==='student') echo 'selected'; ?>>Student</option>
                                         <option value="faculty" <?php if($user['role']==='faculty') echo 'selected'; ?>>Faculty</option>
                                         <option value="admin" <?php if($user['role']==='admin') echo 'selected'; ?>>Admin</option>

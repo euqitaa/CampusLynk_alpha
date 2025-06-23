@@ -24,28 +24,28 @@ $message = '';
 $error = '';
 
 if (
-    $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['schedule_file'])
+    $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['exam_schedule_file'])
 ) {
-    $file = $_FILES['schedule_file'];
+    $file = $_FILES['exam_schedule_file'];
+    $allowed_types = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel'];
+    $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
     if ($file['error'] === UPLOAD_ERR_OK) {
-        $allowed_types = ['application/pdf'];
-        if (!in_array($file['type'], $allowed_types)) {
-            $error = 'Only PDF files are allowed.';
+        if (!in_array($ext, ['xlsx', 'xls'])) {
+            $error = 'Only Excel files (.xlsx, .xls) are allowed.';
         } else {
             $upload_dir = __DIR__ . '/uploads/';
             if (!is_dir($upload_dir)) mkdir($upload_dir, 0777, true);
-            $pdf_path = $upload_dir . 'schedule_import.pdf';
-            move_uploaded_file($file['tmp_name'], $pdf_path);
+            $excel_path = $upload_dir . 'exam_schedule_import.' . $ext;
+            move_uploaded_file($file['tmp_name'], $excel_path);
 
-            // Automatically run the Python script
+            // Call the Python script to process the file
             $output = [];
             $return_var = 0;
-            exec('python import_schedule.py 2>&1', $output, $return_var);
+            exec('python import_exam_schedule.py ' . escapeshellarg($excel_path) . ' 2>&1', $output, $return_var);
 
             if ($return_var === 0) {
-                $message = "File processed and imported successfully.<br>CSV saved as <code>uploads/schedule_import.csv</code>.<br>" . implode('<br>', $output);
+                $message = "File processed and imported successfully.<br>" . implode('<br>', $output);
             } else {
-                // Check for Python not found error
                 $output_str = implode('\n', $output);
                 if (strpos($output_str, "'python' is not recognized as an internal or external command") !== false) {
                     $error = "Error: Python is not installed or not in your system PATH.<br>" .
@@ -60,12 +60,12 @@ if (
     }
 }
 
-$schedules = [];
+$examSchedules = [];
 try {
-    $stmt = $db->query("SELECT * FROM course_schedules ORDER BY id DESC");
-    $schedules = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $stmt = $db->query("SELECT * FROM exam_schedules ORDER BY id DESC LIMIT 50");
+    $examSchedules = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-    $error = 'Error fetching schedules: ' . $e->getMessage();
+    $error = 'Error fetching exam schedules: ' . $e->getMessage();
 }
 ?>
 <!DOCTYPE html>
@@ -73,7 +73,7 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Data Import - CampusLynk</title>
+    <title>Exam Schedule Importer - CampusLynk</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -88,8 +88,8 @@ try {
     <main class="main-content">
         <div class="admin-header">
             <div>
-                <h1 class="text-2xl font-bold">Data Import</h1>
-                <p class="text-muted">Upload and manage class schedules</p>
+                <h1 class="text-2xl font-bold">Exam Schedule Importer</h1>
+                <p class="text-muted">Upload and manage exam schedules</p>
             </div>
         </div>
         <?php if ($message): ?>
@@ -100,46 +100,54 @@ try {
         <?php endif; ?>
         <div class="card mb-6">
             <div class="card-body">
-                <h3 class="card-title">Upload Schedule PDF</h3>
-                <form method="POST" enctype="multipart/form-data" class="mt-4">
+                <h3 class="card-title">Upload Exam Schedule (Excel)</h3>
+                <form method="POST" enctype="multipart/form-data" class="mt-4" id="exam-import-form">
                     <div class="form-group">
-                        <label class="form-label">Select PDF File</label>
-                        <input type="file" name="schedule_file" class="form-input" accept=".pdf" required>
+                        <label class="form-label">Select Excel File (.xlsx, .xls)</label>
+                        <input type="file" name="exam_schedule_file" class="form-input" accept=".xlsx,.xls" required>
                     </div>
+                    <div class="alert alert-warning mt-2">Importing a new exam schedule will <b>delete all previous exam schedules</b> from the database. Please proceed with caution.</div>
                     <button type="submit" class="btn btn-primary mt-4">Upload & Import</button>
                 </form>
+                <script>
+                document.getElementById('exam-import-form').addEventListener('submit', function(e) {
+                    if (!confirm('Are you sure you want to import this exam schedule? This will DELETE all previous exam schedules from the database.')) {
+                        e.preventDefault();
+                    }
+                });
+                </script>
             </div>
         </div>
         <div class="card">
             <div class="card-body">
-                <h3 class="card-title">Recent Imports</h3>
+                <h3 class="card-title">Recent Exam Schedule Imports</h3>
                 <div class="table-responsive mt-4" style="overflow-x:auto;">
-                    <table class="table" style="min-width:900px;">
+                    <table class="table" style="min-width:1000px;">
                         <thead>
                             <tr>
                                 <th>ID</th>
+                                <th>Department</th>
                                 <th>Course Code</th>
+                                <th>Course Title</th>
                                 <th>Section</th>
-                                <th>Day1</th>
-                                <th>Day2</th>
-                                <th>Time1</th>
-                                <th>Time2</th>
-                                <th>Faculty</th>
-                                <th>Credit</th>
+                                <th>Teacher</th>
+                                <th>Exam Date</th>
+                                <th>Exam Time</th>
+                                <th>Room</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($schedules as $schedule): ?>
+                            <?php foreach ($examSchedules as $exam): ?>
                                 <tr>
-                                    <td><?php echo htmlspecialchars($schedule['id']); ?></td>
-                                    <td><?php echo htmlspecialchars($schedule['course_code']); ?></td>
-                                    <td><?php echo htmlspecialchars($schedule['section']); ?></td>
-                                    <td><?php echo htmlspecialchars($schedule['day1']); ?></td>
-                                    <td><?php echo htmlspecialchars($schedule['day2']); ?></td>
-                                    <td><?php echo htmlspecialchars($schedule['time1']); ?></td>
-                                    <td><?php echo htmlspecialchars($schedule['time2']); ?></td>
-                                    <td><?php echo htmlspecialchars($schedule['faculty_name']); ?></td>
-                                    <td><?php echo htmlspecialchars($schedule['credit']); ?></td>
+                                    <td><?php echo htmlspecialchars($exam['id']); ?></td>
+                                    <td><?php echo htmlspecialchars($exam['department']); ?></td>
+                                    <td><?php echo htmlspecialchars($exam['course_code']); ?></td>
+                                    <td><?php echo htmlspecialchars($exam['course_title']); ?></td>
+                                    <td><?php echo htmlspecialchars($exam['section']); ?></td>
+                                    <td><?php echo htmlspecialchars($exam['teacher']); ?></td>
+                                    <td><?php echo htmlspecialchars($exam['exam_date']); ?></td>
+                                    <td><?php echo htmlspecialchars($exam['exam_time']); ?></td>
+                                    <td><?php echo htmlspecialchars($exam['room']); ?></td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>

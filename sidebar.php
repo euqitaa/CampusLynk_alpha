@@ -64,6 +64,12 @@ $role = $sidebar_user['role'];
                     </a>
                 </li>
                 <li>
+                    <a href="admin_exam_import.php" class="nav-link <?php echo $current_page === 'admin_exam_import.php' ? 'active' : ''; ?>">
+                        <i class='bx bxs-calendar-event'></i>
+                        <span>Exam Schedule Importer</span>
+                    </a>
+                </li>
+                <li>
                     <a href="admin_users.php" class="nav-link <?php echo $current_page === 'admin_users.php' ? 'active' : ''; ?>">
                         <i class='bx bxs-user-detail'></i>
                         <span>User Management</span>

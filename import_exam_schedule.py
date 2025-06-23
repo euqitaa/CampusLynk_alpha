@@ -28,6 +28,9 @@ def main():
         )
         cursor = conn.cursor()
 
+        # WARNING: This will delete all previous exam schedules before import
+        cursor.execute('DELETE FROM exam_schedules')
+
         for _, row in df.iterrows():
             try:
                 cursor.execute(

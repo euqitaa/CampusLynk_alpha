@@ -19,32 +19,6 @@ try {
 } catch (PDOException $e) {
     die('Database error: ' . $e->getMessage());
 }
-
-// Exam Schedule Section for Admin
-$db = new Database();
-$conn = $db->getConnection();
-$stmt = $conn->prepare("SELECT * FROM exam_schedules ORDER BY exam_date, exam_time");
-$stmt->execute();
-$examSchedules = $stmt->fetchAll();
-if ($examSchedules) {
-    echo '<h2>All Exam Schedules</h2>';
-    echo '<table border="1"><tr><th>Department</th><th>Course Code</th><th>Course Title</th><th>Section</th><th>Teacher</th><th>Exam Date</th><th>Exam Time</th><th>Room</th></tr>';
-    foreach ($examSchedules as $exam) {
-        echo '<tr>';
-        echo '<td>' . htmlspecialchars($exam['department']) . '</td>';
-        echo '<td>' . htmlspecialchars($exam['course_code']) . '</td>';
-        echo '<td>' . htmlspecialchars($exam['course_title']) . '</td>';
-        echo '<td>' . htmlspecialchars($exam['section']) . '</td>';
-        echo '<td>' . htmlspecialchars($exam['teacher']) . '</td>';
-        echo '<td>' . htmlspecialchars($exam['exam_date']) . '</td>';
-        echo '<td>' . htmlspecialchars($exam['exam_time']) . '</td>';
-        echo '<td>' . htmlspecialchars($exam['room']) . '</td>';
-        echo '</tr>';
-    }
-    echo '</table>';
-} else {
-    echo '<h2>All Exam Schedules</h2><p>No exam schedules found.</p>';
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -63,7 +37,7 @@ if ($examSchedules) {
 </head>
 <body>
     <?php include 'sidebar.php'; ?>
-    <main class="admin-content">
+    <main class="main-content">
         <div class="admin-header">
             <div>
                 <h1 class="text-2xl font-bold">Admin Dashboard</h1>
@@ -80,13 +54,17 @@ if ($examSchedules) {
                 </div>
             </div>
         </div>
-        <!-- Exam Schedule Upload Section -->
-        <h2>Upload Exam Schedule</h2>
-        <form action="upload_exam_schedule.php" method="post" enctype="multipart/form-data">
-            <label for="exam_schedule_file">Select Excel file:</label>
-            <input type="file" name="exam_schedule_file" id="exam_schedule_file" accept=".xlsx,.xls" required>
-            <button type="submit">Upload</button>
-        </form>
+        <div class="card">
+            <div class="card-body">
+                <h2>All Exam Schedules</h2>
+                <div style="overflow-x:auto;">
+                    <table class="table" style="min-width:1000px;">
+                        <tr><th>Department</th><th>Course Code</th><th>Course Title</th><th>Section</th><th>Teacher</th><th>Exam Date</th><th>Exam Time</th><th>Room</th></tr>
+                        <!-- rows -->
+                    </table>
+                </div>
+            </div>
+        </div>
     </main>
 </body>
 </html> 
