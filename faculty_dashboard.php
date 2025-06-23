@@ -37,6 +37,44 @@ try {
     $students_stmt->execute([$faculty['name']]);
     $total_students = $students_stmt->fetch(PDO::FETCH_ASSOC)['total'];
     
+    // Get faculty.id from faculty table for foreign key
+    $faculty_id = null;
+    $faculty_id_stmt = $db->prepare("SELECT id FROM faculty WHERE email = ?");
+    $faculty_id_stmt->execute([$faculty['email']]);
+    $faculty_id_row = $faculty_id_stmt->fetch(PDO::FETCH_ASSOC);
+    if ($faculty_id_row) {
+        $faculty_id = $faculty_id_row['id'];
+    } else {
+        // fallback: do not allow schedule add if not found
+        $faculty_id = null;
+    }
+
+    // Handle add counselling time POST
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_counselling']) && $faculty_id) {
+        $day = $_POST['day_of_week'];
+        $start = $_POST['start_time'];
+        $end = $_POST['end_time'];
+        $stmt = $db->prepare("INSERT INTO counselling_times (faculty_id, day_of_week, start_time, end_time) VALUES (?, ?, ?, ?)");
+        $stmt->execute([$faculty_id, $day, $start, $end]);
+        header("Location: faculty_dashboard.php?success=Counselling time added");
+        exit();
+    }
+
+    // Get this faculty's counselling times
+    $counselling_times = $db->prepare("SELECT * FROM counselling_times WHERE faculty_id = ?");
+    $counselling_times->execute([$faculty_id]);
+    $counselling_times = $counselling_times->fetchAll(PDO::FETCH_ASSOC);
+
+    // Get pending requests for this faculty
+    $pending_requests = $db->prepare("SELECT cr.*, u.name as student_name, u.email as student_email FROM counselling_requests cr JOIN users u ON cr.student_id = u.id WHERE cr.faculty_id = ? AND cr.status = 'pending'");
+    $pending_requests->execute([$faculty_id]);
+    $pending_requests = $pending_requests->fetchAll(PDO::FETCH_ASSOC);
+
+    // Get accepted requests for calendar
+    $accepted_requests = $db->prepare("SELECT cr.*, u.name as student_name FROM counselling_requests cr JOIN users u ON cr.student_id = u.id WHERE cr.faculty_id = ? AND cr.status = 'approved'");
+    $accepted_requests->execute([$faculty_id]);
+    $accepted_requests = $accepted_requests->fetchAll(PDO::FETCH_ASSOC);
+
 } catch (PDOException $e) {
     header("Location: login.php?error=Database Error: " . urlencode($e->getMessage()));
     exit();
@@ -54,7 +92,11 @@ try {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/faculty.css">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <!-- <script>
@@ -74,67 +116,165 @@ try {
 
 </head>
 
-<body>
-    <?php include 'sidebar.php'; ?>
+<body class="dashboard-page">
+    <div class="dashboard-container">
+        <?php include 'sidebar.php'; ?>
+        <main class="main-content">
+            <section class="welcome-section">
+                <h1>Welcome, <?php echo htmlspecialchars($faculty['name']); ?></h1>
+                <p class="text-muted">Manage your courses and student requests</p>
+            </section>
 
-    <main class="main-content">
-        <section class="welcome-section">
-            <h1>Welcome, <?php echo htmlspecialchars($faculty['name']); ?></h1>
-            <p class="text-muted">Manage your courses and student requests</p>
-        </section>
-
-        <?php if (isset($error)): ?>
-            <div class="alert alert-error">
-                <?php echo htmlspecialchars($error); ?>
-            </div>
-        <?php else: ?>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="card">
-                    <h2 class="text-xl font-semibold mb-4">Quick Access</h2>
-                    <div class="space-y-4">
-                        <a href="approve_time_slots.php" class="btn btn-primary w-full">
-                            Approve Time Slots
-                        </a>
-                        <a href="manage_courses.php" class="btn btn-secondary w-full">
-                            Manage Courses
-                        </a>
-                    </div>
+            <?php if (isset($error)): ?>
+                <div class="alert alert-error">
+                    <?php echo htmlspecialchars($error); ?>
                 </div>
-
-                <div class="card">
-                    <h2 class="text-xl font-semibold mb-4">Course Overview</h2>
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center">
-                            <span class="text-muted">Active Courses</span>
-                            <span class="font-semibold"><?php echo count($courses); ?></span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-muted">Total Students</span>
-                            <span class="font-semibold"><?php echo $total_students; ?></span>
+            <?php else: ?>
+            <div class="dashboard-grid" style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 2rem; align-items: start;">
+                <!-- Left Column: Quick Access, Course Overview, Recent Activities -->
+                <div class="content-stack" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    <div class="card">
+                        <h2 class="text-xl font-semibold mb-4"><i class='bx bxs-bolt'></i> Quick Access</h2>
+                        <div class="space-y-4">
+                            <a href="approve_time_slots.php" class="btn btn-primary w-full">
+                                <i class='bx bx-check-square'></i> Approve Time Slots
+                            </a>
+                            <a href="manage_courses.php" class="btn btn-secondary w-full">
+                                <i class='bx bx-book'></i> Manage Courses
+                            </a>
                         </div>
                     </div>
-                </div>
 
-                <div class="card">
-                    <h2 class="text-xl font-semibold mb-4">Recent Activities</h2>
-                    <div class="space-y-4">
-                        <?php if (!empty($courses)): ?>
-                            <?php foreach (array_slice($courses, 0, 3) as $course): ?>
-                                <div class="flex items-center space-x-4">
-                                    <div class="flex-1">
-                                        <h3 class="font-semibold"><?php echo htmlspecialchars($course['name']); ?></h3>
-                                        <p class="text-sm text-muted"><?php echo htmlspecialchars($course['code']); ?></p>
+                    <div class="card">
+                        <h2 class="text-xl font-semibold mb-4"><i class='bx bxs-bar-chart-alt-2'></i> Course Overview</h2>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <span class="text-muted">Active Courses</span>
+                                <span class="font-semibold"><?php echo count($courses); ?></span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-muted">Total Students</span>
+                                <span class="font-semibold"><?php echo $total_students; ?></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h2 class="text-xl font-semibold mb-4"><i class='bx bxs-time-five'></i> Recent Activities</h2>
+                        <div class="space-y-4">
+                            <?php if (!empty($courses)): ?>
+                                <?php foreach (array_slice($courses, 0, 3) as $course): ?>
+                                    <div class="flex items-center space-x-4">
+                                        <div class="flex-1">
+                                            <h3 class="font-semibold"><?php echo htmlspecialchars($course['name']); ?></h3>
+                                            <p class="text-sm text-muted"><?php echo htmlspecialchars($course['code']); ?></p>
+                                        </div>
                                     </div>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <div class="empty-state">
+                                    <i class='bx bx-info-circle'></i>
+                                    <p class="text-muted">No active courses</p>
                                 </div>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <p class="text-muted">No active courses</p>
-                        <?php endif; ?>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </div>
+                <!-- Right Column: Add Counselling, Pending Requests, Accepted Calendar -->
+                <div class="content-stack" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    <section class="card mb-6">
+                        <h2 class="text-xl font-semibold mb-4"><i class='bx bx-calendar-plus'></i> Add Counselling Schedule</h2>
+                        <form method="POST" class="flex flex-wrap gap-4 items-end">
+                            <input type="hidden" name="add_counselling" value="1">
+                            <div>
+                                <label>Day</label>
+                                <select name="day_of_week" required class="form-input">
+                                    <option value="">Select Day</option>
+                                    <option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>Start Time</label>
+                                <input type="time" name="start_time" required class="form-input">
+                            </div>
+                            <div>
+                                <label>End Time</label>
+                                <input type="time" name="end_time" required class="form-input">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add</button>
+                        </form>
+                        <div class="mt-4">
+                            <h3 class="font-medium mb-2">Your Counselling Times</h3>
+                            <ul class="list">
+                                <?php if (empty($counselling_times)): ?>
+                                    <li class="empty-state"><i class='bx bx-time'></i> No counselling times set.</li>
+                                <?php else: ?>
+                                    <?php foreach ($counselling_times as $ct): ?>
+                                        <li><?php echo htmlspecialchars($ct['day_of_week'] . ': ' . $ct['start_time'] . ' - ' . $ct['end_time']); ?></li>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </ul>
+                        </div>
+                    </section>
+                    <section class="card mb-6">
+                        <h2 class="text-xl font-semibold mb-4"><i class='bx bx-envelope'></i> Pending Counselling Requests</h2>
+                        <?php if (empty($pending_requests)): ?>
+                            <div class="empty-state"><i class='bx bx-message-square-x'></i> No pending requests.</div>
+                        <?php else: ?>
+                            <div style="overflow-x:auto;">
+                            <table class="table-auto w-full">
+                                <thead><tr><th>Student</th><th>Email</th><th>Requested Time</th><th>Action</th></tr></thead>
+                                <tbody>
+                                <?php foreach ($pending_requests as $req): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($req['student_name']); ?></td>
+                                        <td><?php echo htmlspecialchars($req['student_email']); ?></td>
+                                        <td><?php echo htmlspecialchars($req['requested_time']); ?></td>
+                                        <td>
+                                            <form method="POST" action="faculty_counselling_action.php" style="display:inline;">
+                                                <input type="hidden" name="request_id" value="<?php echo $req['id']; ?>">
+                                                <button name="action" value="approve" class="btn btn-success btn-sm">Approve</button>
+                                                <button name="action" value="reject" class="btn btn-danger btn-sm">Reject</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                            </div>
+                        <?php endif; ?>
+                    </section>
+                    <section class="card">
+                        <h2 class="text-xl font-semibold mb-4"><i class='bx bx-calendar'></i> Accepted Counselling Calendar</h2>
+                        <?php if (empty($accepted_requests)): ?>
+                            <div class="empty-state"><i class='bx bx-calendar'></i> No accepted counselling sessions.</div>
+                        <?php else: ?>
+                            <div style="overflow-x:auto;">
+                            <table class="table-auto w-full">
+                                <thead><tr><th>Student</th><th>Day</th><th>Time</th></tr></thead>
+                                <tbody>
+                                <?php foreach ($accepted_requests as $ar): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($ar['student_name']); ?></td>
+                                        <td><?php echo htmlspecialchars($ar['requested_time']); ?></td>
+                                        <td><!-- Optionally parse and show time here --></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                            </div>
+                        <?php endif; ?>
+                    </section>
+                </div>
             </div>
-        <?php endif; ?>
-    </main>
+            <style>
+            @media (max-width: 1024px) {
+                .dashboard-grid { grid-template-columns: 1fr; }
+            }
+            </style>
+            <?php endif; ?>
+        </main>
+    </div>
 
     <script src="faculty_dashboard.js"></script>
 </body>

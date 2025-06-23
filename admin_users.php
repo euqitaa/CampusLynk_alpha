@@ -36,7 +36,7 @@ try {
     <link rel="stylesheet" href="css/components.css">
 </head>
 <body>
-    <?php include 'admin_sidebar.php'; ?>
+    <?php include 'sidebar.php'; ?>
     <main class="admin-content">
         <div class="admin-header">
             <div>

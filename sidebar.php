@@ -28,17 +28,17 @@ try {
     exit();
 }
 
-// Get current page for active state
 $current_page = basename($_SERVER['PHP_SELF']);
+$role = $sidebar_user['role'];
 ?>
 <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
 <aside class="sidebar">
     <div class="sidebar-header">
         <div class="logo-and-title-div">
-            <a href="dashboard.php" class="navbar-brand">CampusLynk</a>
+            <a href="<?php echo $role === 'faculty' ? 'faculty_dashboard.php' : ($role === 'admin' ? 'admin_dashboard.php' : 'dashboard.php'); ?>" class="navbar-brand">CampusLynk</a>
         </div>
-        <a href="profile.php" class="user-info">
+        <a href="<?php echo $role === 'faculty' ? 'faculty_dashboard.php' : ($role === 'admin' ? 'admin_dashboard.php' : 'profile.php'); ?>" class="user-info">
             <div class="user-avatar">
                 <i class='bx bxs-user-circle'></i>
             </div>
@@ -48,65 +48,118 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </div>
         </a>
     </div>
-
     <div class="sidebar-content">
         <ul class="nav-links">
-            <li>
-                <a href="dashboard.php" class="nav-link <?php echo $current_page === 'dashboard.php' ? 'active' : ''; ?>">
-                    <i class='bx bxs-dashboard'></i>
-                    <span>Dashboard</span>
-                </a>
-            </li>
-            <li>
-                <a href="study-materials.php" class="nav-link <?php echo $current_page === 'study-materials.php' ? 'active' : ''; ?>">
-                    <i class='bx bxs-book'></i>
-                    <span>Study Materials</span>
-                </a>
-            </li>
-            <li>
-                <a href="class_routine1.php" class="nav-link <?php echo $current_page === 'class_routine1.php' ? 'active' : ''; ?>">
-                    <i class='bx bxs-calendar'></i>
-                    <span>Class Routine</span>
-                </a>
-            </li>
-            <li>
-                <a href="exam_schedule.php" class="nav-link <?php echo $current_page === 'exam_schedule.php' ? 'active' : ''; ?>">
-                    <i class='bx bxs-time'></i>
-                    <span>Exam Schedule</span>
-                </a>
-            </li>
-            <li>
-                <a href="eventpage.php" class="nav-link <?php echo $current_page === 'eventpage.php' ? 'active' : ''; ?>">
-                    <i class='bx bxs-calendar-event'></i>
-                    <span>Events</span>
-                </a>
-            </li>
-            <li>
-                <a href="faculty.php" class="nav-link <?php echo $current_page === 'faculty.php' ? 'active' : ''; ?>">
-                    <i class='bx bxs-user-badge'></i>
-                    <span>Faculty</span>
-                </a>
-            </li>
-            <li>
-                <a href="email_assistant.php" class="nav-link <?php echo $current_page === 'email_assistant.php' ? 'active' : ''; ?>">
-                    <i class='bx bxs-envelope'></i>
-                    <span>Email Generator</span>
-                </a>
-            </li>
-            <li>
-                <a href="routine_suggestor.php" class="nav-link <?php echo $current_page === 'routine_suggestor.php' ? 'active' : ''; ?>">
-                    <i class='bx bxs-calendar-check'></i>
-                    <span>Routine Suggestor</span>
-                </a>
-            </li>
-            <?php if ($sidebar_user['role'] === 'admin'): ?>
-            <!-- Admin Panel link removed for consistency; admin access is via admin_login.php and dedicated admin pages only. -->
+            <?php if ($role === 'admin'): ?>
+                <li>
+                    <a href="admin_dashboard.php" class="nav-link <?php echo $current_page === 'admin_dashboard.php' ? 'active' : ''; ?>">
+                        <i class='bx bxs-dashboard'></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="admin_dataimport.php" class="nav-link <?php echo $current_page === 'admin_dataimport.php' ? 'active' : ''; ?>">
+                        <i class='bx bxs-file-import'></i>
+                        <span>Data Import</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="admin_users.php" class="nav-link <?php echo $current_page === 'admin_users.php' ? 'active' : ''; ?>">
+                        <i class='bx bxs-user-detail'></i>
+                        <span>User Management</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="admin_settings.php" class="nav-link <?php echo $current_page === 'admin_settings.php' ? 'active' : ''; ?>">
+                        <i class='bx bxs-cog'></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            <?php elseif ($role === 'faculty'): ?>
+                <li>
+                    <a href="faculty_dashboard.php" class="nav-link <?php echo $current_page === 'faculty_dashboard.php' ? 'active' : ''; ?>">
+                        <i class='bx bxs-dashboard'></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="faculty_counselling_schedule.php" class="nav-link <?php echo $current_page === 'faculty_counselling_schedule.php' ? 'active' : ''; ?>">
+                        <i class='bx bx-calendar-plus'></i>
+                        <span>Counselling Schedule</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="faculty_counselling_requests.php" class="nav-link <?php echo $current_page === 'faculty_counselling_requests.php' ? 'active' : ''; ?>">
+                        <i class='bx bx-envelope'></i>
+                        <span>Counselling Requests</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="faculty_counselling_calendar.php" class="nav-link <?php echo $current_page === 'faculty_counselling_calendar.php' ? 'active' : ''; ?>">
+                        <i class='bx bx-calendar'></i>
+                        <span>Calendar</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="study-materials.php" class="nav-link <?php echo $current_page === 'study-materials.php' ? 'active' : ''; ?>">
+                        <i class='bx bx-book'></i>
+                        <span>Study Materials</span>
+                    </a>
+                </li>
+            <?php else: ?>
+                <li>
+                    <a href="dashboard.php" class="nav-link <?php echo $current_page === 'dashboard.php' ? 'active' : ''; ?>">
+                        <i class='bx bxs-dashboard'></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="study-materials.php" class="nav-link <?php echo $current_page === 'study-materials.php' ? 'active' : ''; ?>">
+                        <i class='bx bxs-book'></i>
+                        <span>Study Materials</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="class_routine1.php" class="nav-link <?php echo $current_page === 'class_routine1.php' ? 'active' : ''; ?>">
+                        <i class='bx bxs-calendar'></i>
+                        <span>Class Routine</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="exam_schedule.php" class="nav-link <?php echo $current_page === 'exam_schedule.php' ? 'active' : ''; ?>">
+                        <i class='bx bxs-time'></i>
+                        <span>Exam Schedule</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="eventpage.php" class="nav-link <?php echo $current_page === 'eventpage.php' ? 'active' : ''; ?>">
+                        <i class='bx bxs-calendar-event'></i>
+                        <span>Events</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="faculty.php" class="nav-link <?php echo $current_page === 'faculty.php' ? 'active' : ''; ?>">
+                        <i class='bx bxs-user-badge'></i>
+                        <span>Faculty</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="email_assistant.php" class="nav-link <?php echo $current_page === 'email_assistant.php' ? 'active' : ''; ?>">
+                        <i class='bx bxs-envelope'></i>
+                        <span>Email Generator</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="routine_suggestor.php" class="nav-link <?php echo $current_page === 'routine_suggestor.php' ? 'active' : ''; ?>">
+                        <i class='bx bxs-calendar-check'></i>
+                        <span>Routine Suggestor</span>
+                    </a>
+                </li>
             <?php endif; ?>
         </ul>
     </div>
-
     <div class="sidebar-footer">
-        <a href="logout.php" class="logout-btn">
+        <a href="<?php echo $role === 'admin' ? 'admin_logout.php' : 'logout.php'; ?>" class="logout-btn">
             <i class='bx bxs-log-out'></i>
             <span>Logout</span>
         </a>
