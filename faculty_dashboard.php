@@ -79,6 +79,33 @@ try {
     header("Location: login.php?error=Database Error: " . urlencode($e->getMessage()));
     exit();
 }
+
+// Exam Schedule Section for Teachers
+if (isset($_SESSION['faculty_name'])) {
+    require_once 'config/database.php';
+    $db = new Database();
+    $conn = $db->getConnection();
+    $stmt = $conn->prepare("SELECT * FROM exam_schedules WHERE teacher = ? ORDER BY exam_date, exam_time");
+    $stmt->execute([$_SESSION['faculty_name']]);
+    $examSchedules = $stmt->fetchAll();
+    if ($examSchedules) {
+        echo '<h2>Your Exam Schedule</h2>';
+        echo '<table border="1"><tr><th>Course Code</th><th>Course Title</th><th>Section</th><th>Exam Date</th><th>Exam Time</th><th>Room</th></tr>';
+        foreach ($examSchedules as $exam) {
+            echo '<tr>';
+            echo '<td>' . htmlspecialchars($exam['course_code']) . '</td>';
+            echo '<td>' . htmlspecialchars($exam['course_title']) . '</td>';
+            echo '<td>' . htmlspecialchars($exam['section']) . '</td>';
+            echo '<td>' . htmlspecialchars($exam['exam_date']) . '</td>';
+            echo '<td>' . htmlspecialchars($exam['exam_time']) . '</td>';
+            echo '<td>' . htmlspecialchars($exam['room']) . '</td>';
+            echo '</tr>';
+        }
+        echo '</table>';
+    } else {
+        echo '<h2>Your Exam Schedule</h2><p>No exam schedule found.</p>';
+    }
+}
 ?>
 
 <!DOCTYPE html>
