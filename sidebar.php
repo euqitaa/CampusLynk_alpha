@@ -171,7 +171,22 @@ $role = $sidebar_user['role'];
         </ul>
     </div>
     <div class="sidebar-footer">
-        <a href="<?php echo $role === 'admin' ? 'admin_logout.php' : 'logout.php'; ?>" class="logout-btn">
+        <?php
+        $logout_url = 'logout.php';
+        if (isset($_SESSION['role'])) {
+            switch ($_SESSION['role']) {
+                case 'admin':
+                    $logout_url = 'admin_logout.php';
+                    break;
+                case 'faculty':
+                    $logout_url = 'faculty_logout.php';
+                    break;
+                default:
+                    $logout_url = 'logout.php';
+            }
+        }
+        ?>
+        <a href="<?php echo $logout_url; ?>" class="logout-btn">
             <i class='bx bxs-log-out'></i>
             <span>Logout</span>
         </a>

@@ -1,3 +1,44 @@
+<?php
+session_start();
+require_once 'config/database.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = trim($_POST['myemail'] ?? '');
+    $password = $_POST['mypass'] ?? '';
+    try {
+        $db = (new Database())->getConnection();
+        $stmt = $db->prepare("SELECT * FROM users WHERE email = ?");
+        $stmt->execute([$email]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($user && (password_verify($password, $user['password']) || $user['password'] === md5($password))) {
+            $_SESSION['useremail'] = $user['email'];
+            $_SESSION['username'] = $user['username'];
+            $_SESSION['role'] = $user['role'];
+            
+            // Redirect based on role
+            switch($user['role']) {
+                case 'admin':
+                    header('Location: admin_dashboard.php');
+                    break;
+                case 'faculty':
+                    header('Location: faculty_dashboard.php');
+                    break;
+                case 'student':
+                default:
+                    header('Location: dashboard.php');
+                    break;
+            }
+            exit();
+        } else {
+            header('Location: login.php?error=Invalid credentials');
+            exit();
+        }
+    } catch (PDOException $e) {
+        header('Location: login.php?error=Database error');
+        exit();
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -40,7 +81,7 @@
                     echo '<div class="alert alert-success mb-4">' . htmlspecialchars($_GET['success']) . '</div>';
                 }
                 ?>
-                <form action="loginphp.php" method="POST" class="auth-form">
+                <form action="login.php" method="POST" class="auth-form">
                     <div class="form-group">
                         <label class="form-label">Email</label>
                         <div class="input-with-icon">

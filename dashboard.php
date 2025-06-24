@@ -26,6 +26,45 @@ try {
     $course_query = $db->query("SELECT course_code, MIN(course_title) as course_title FROM upcoming_courses GROUP BY course_code ORDER BY MIN(course_title)");
     $courses = $course_query->fetchAll(PDO::FETCH_ASSOC);
 
+    // Fetch user id
+    $userId = $user['id'];
+
+    // 1. Count enrolled courses
+    $courseCount = 0;
+    $courseStmt = $db->prepare("SELECT COUNT(DISTINCT se.course_id) FROM student_enrollments se WHERE se.student_id = ?");
+    $courseStmt->execute([$userId]);
+    $courseCount = $courseStmt->fetchColumn();
+
+    // 2. Count requests (counselling_requests for this student)
+    $requestCount = 0;
+    $requestStmt = $db->prepare("SELECT COUNT(*) FROM counselling_requests WHERE student_id = ?");
+    $requestStmt->execute([$userId]);
+    $requestCount = $requestStmt->fetchColumn();
+
+    // 3. Count study materials (all PDFs in enrolled courses' folders)
+    $materialCount = 0;
+    $materialQuery = $db->prepare("
+        SELECT uc.course_code
+        FROM student_enrollments se
+        JOIN upcoming_courses uc ON se.course_id = uc.id
+        WHERE se.student_id = ?
+        GROUP BY uc.course_code
+    ");
+    $materialQuery->execute([$userId]);
+    $materialCourses = $materialQuery->fetchAll(PDO::FETCH_COLUMN);
+    foreach ($materialCourses as $courseCode) {
+        $dir = __DIR__ . "/study_materials/" . $courseCode;
+        if (is_dir($dir)) {
+            $files = glob($dir . "/*.pdf");
+            $materialCount += count($files);
+        }
+    }
+
+    // 4. Count events (all events)
+    $eventCount = 0;
+    $eventStmt = $db->query("SELECT COUNT(*) FROM events");
+    $eventCount = $eventStmt->fetchColumn();
+
 } catch (PDOException $e) {
     header("Location: login.php?error=Database Error: " . urlencode($e->getMessage()));
     exit();
@@ -102,7 +141,7 @@ if (isset($_SESSION['department']) && isset($_SESSION['section'])) {
         <div class="quick-access-row">
             <div class="quick-access-card border-purple">
                 <div class="quick-access-card-content">
-                    <div class="quick-access-number">3</div>
+                    <div class="quick-access-number"><?php echo $courseCount; ?></div>
                     <div class="quick-access-label">Courses</div>
                 </div>
                 <div class="quick-access-icon purple">
@@ -112,7 +151,7 @@ if (isset($_SESSION['department']) && isset($_SESSION['section'])) {
 
             <div class="quick-access-card border-yellow">
                 <div class="quick-access-card-content">
-                    <div class="quick-access-number">5</div>
+                    <div class="quick-access-number"><?php echo $requestCount; ?></div>
                     <div class="quick-access-label">Requests</div>
                 </div>
                 <div class="quick-access-icon yellow">
@@ -122,7 +161,7 @@ if (isset($_SESSION['department']) && isset($_SESSION['section'])) {
 
             <div class="quick-access-card border-pink">
                 <div class="quick-access-card-content">
-                    <div class="quick-access-number">12</div>
+                    <div class="quick-access-number"><?php echo $materialCount; ?></div>
                     <div class="quick-access-label">Materials</div>
                 </div>
                 <div class="quick-access-icon pink">
@@ -132,7 +171,7 @@ if (isset($_SESSION['department']) && isset($_SESSION['section'])) {
 
             <div class="quick-access-card border-blue">
                 <div class="quick-access-card-content">
-                    <div class="quick-access-number">2</div>
+                    <div class="quick-access-number"><?php echo $eventCount; ?></div>
                     <div class="quick-access-label">Events</div>
                 </div>
                 <div class="quick-access-icon blue">

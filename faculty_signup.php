@@ -20,7 +20,7 @@
     
     <main class="container-sm">
         <div class="card">
-            <form action="signupphp.php" method="POST">
+            <form action="faculty_signup_php.php" method="POST">
                 <div class="form-group">
                     <label class="form-label">👤 Full Name</label>
                     <input type="text" name="myname" required class="form-input">
@@ -56,7 +56,7 @@
                 <button type="submit" class="btn btn-primary">Sign Up</button>
                 
                 <p class="text-muted text-center mt-6">
-                    <a href="faculty_login.php" class="text-primary">← Back to Login</a>
+                    <a href="login.php" class="text-primary">← Back to Login</a>
                 </p>
             </form>
         </div>

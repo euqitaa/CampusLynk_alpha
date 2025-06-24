@@ -22,9 +22,7 @@ HEADER = [
 ]
 
 REMOVE_PATTERNS = [
-    r'(?i)if required',
     r'(?i)\(If Required\)',
-    r'(?i)\(lab\)',
     r'(?i)\(Computer Lab\)',
     r'(?i)\(Digital Lab\)',
 

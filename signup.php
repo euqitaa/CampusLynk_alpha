@@ -1,3 +1,48 @@
+<?php
+require_once 'config/database.php';
+
+$message = '';
+$error = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $name = trim($_POST['name'] ?? '');
+    $username = trim($_POST['username'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $role = $_POST['role'] ?? 'student';
+    $university_id = $_POST['university_id'] ?? null;
+    $password = $_POST['password'] ?? '';
+    $password2 = $_POST['password2'] ?? '';
+
+    if (empty($name) || empty($username) || empty($email) || empty($password) || empty($password2)) {
+        $error = 'All fields are required.';
+    } elseif ($password !== $password2) {
+        $error = 'Passwords do not match.';
+    } elseif (strlen($password) < 8) {
+        $error = 'Password must be at least 8 characters long.';
+    } elseif ($role === 'student' && (empty($university_id) || !preg_match('/^0[0-9]{8,}$/', $university_id))) {
+        $error = 'A valid University ID is required for students.';
+    } else {
+        try {
+            $db = (new Database())->getConnection();
+            // Check if email or username already exists
+            $stmt = $db->prepare("SELECT COUNT(*) FROM users WHERE email = ? OR username = ?");
+            $stmt->execute([$email, $username]);
+            if ($stmt->fetchColumn() > 0) {
+                $error = 'Email or username already exists.';
+            } else {
+                $hash = password_hash($password, PASSWORD_DEFAULT);
+                $stmt = $db->prepare("INSERT INTO users (name, username, email, password, role) VALUES (?, ?, ?, ?, ?)");
+                $stmt->execute([$name, $username, $email, $hash, $role]);
+                // Optionally, store university_id in a separate table if needed
+                header('Location: login.php?success=Account created successfully! Please sign in.');
+                exit();
+            }
+        } catch (PDOException $e) {
+            $error = 'Database error: ' . $e->getMessage();
+        }
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -37,7 +82,7 @@
                     echo '<div class="alert alert-error mb-4">' . htmlspecialchars($_GET['error']) . '</div>';
                 }
                 ?>
-                <form action="signupphp.php" method="POST" class="auth-form">
+                <form action="signup.php" method="POST" class="auth-form">
                     <div class="form-group">
                         <label class="form-label">Full Name</label>
                         <div class="input-with-icon">

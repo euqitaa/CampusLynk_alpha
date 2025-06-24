@@ -22,11 +22,9 @@ HEADER = [
 ]
 
 REMOVE_PATTERNS = [
-    r'(?i)laboratory',
-    r'(?i)if required',
-    r'(?i)lab',
     r'(?i)\(if required\)',
-    r'(?i)\(lab\)',
+    r'(?i)\(Computer Lab\)',
+    r'(?i)\(Digital Lab\)'
 ]
 
 def clean_field(value):

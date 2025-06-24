@@ -24,27 +24,29 @@ try {
         $userId = $user['id'];
 
         $routineQuery = "
-            SELECT uc.course_code, uc.course_title, uc.section, uc.time, uc.day
+            SELECT cs.course_code, cs.course_title, cs.section, 
+                   cs.time1 as time, cs.day1 as day,
+                   cs.faculty_name, cs.room1 as room
             FROM student_enrollments se
             JOIN upcoming_courses uc ON se.course_id = uc.id
+            JOIN course_schedules cs ON uc.course_code = cs.course_code 
+                AND uc.section = cs.section
             WHERE se.student_id = ?
+            UNION
+            SELECT cs.course_code, cs.course_title, cs.section,
+                   cs.time2 as time, cs.day2 as day,
+                   cs.faculty_name, cs.room2 as room
+            FROM student_enrollments se
+            JOIN upcoming_courses uc ON se.course_id = uc.id
+            JOIN course_schedules cs ON uc.course_code = cs.course_code 
+                AND uc.section = cs.section
+            WHERE se.student_id = ? AND cs.day2 IS NOT NULL
         ";
         $routineStmt = $db->prepare($routineQuery);
-        $routineStmt->execute([$userId]);
+        $routineStmt->execute([$userId, $userId]);
         $enrolled_courses = $routineStmt->fetchAll(PDO::FETCH_ASSOC);
 
-        $processed_courses = [];
         foreach ($enrolled_courses as $course) {
-            $processed_courses[] = $course;
-            if ($course['day'] === 'Sat') {
-                $processed_courses[] = array_merge($course, ['day' => 'Tue']);
-            }
-            if ($course['day'] === 'Sun') {
-                $processed_courses[] = array_merge($course, ['day' => 'Wed']);
-            }
-        }
-
-        foreach ($processed_courses as $course) {
             if (in_array($course['day'], $days)) {
                 $schedule[$course['time']][$course['day']] = $course;
                 if (!in_array($course['time'], $timeSlots)) {
@@ -61,7 +63,7 @@ try {
             $timeA = DateTime::createFromFormat('h:i:A', $timeA_str);
             $timeB = DateTime::createFromFormat('h:i:A', $timeB_str);
 
-            // Fallback for safety, though it shouldn't be needed now
+            // Fallback for safety
             if ($timeA === false || $timeB === false) {
                 return strtotime($timeA_str) <=> strtotime($timeB_str);
             }
@@ -128,6 +130,8 @@ try {
                                             <div class="class-cell">
                                                 <span class="class-name"><?php echo htmlspecialchars($class['course_title']); ?></span>
                                                 <span class="class-info"><?php echo htmlspecialchars($class['course_code']); ?> [<?php echo htmlspecialchars($class['section']); ?>]</span>
+                                                <span class="class-details">Room: <?php echo htmlspecialchars($class['room']); ?></span>
+                                                <span class="class-details">Faculty: <?php echo htmlspecialchars($class['faculty_name']); ?></span>
                                             </div>
                                         <?php else: ?>
                                             <div class="empty-cell"></div>
