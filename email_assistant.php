@@ -8,13 +8,8 @@ if (!isset($_SESSION["useremail"]) || empty($_SESSION["useremail"])) {
 
 require_once 'config/database.php';
 
-// Fetch templates from the database
-$db = (new Database())->getConnection();
-$templates = [];
-$stmt = $db->query("SELECT * FROM email_templates ORDER BY id");
-$templates = $stmt->fetchAll();
-
 // Fetch user info for autofill
+$db = (new Database())->getConnection();
 $user = $db->prepare("SELECT * FROM users WHERE email = ?");
 $user->execute([$_SESSION["useremail"]]);
 $user = $user->fetch();
@@ -60,32 +55,26 @@ if ($user && $user['role'] === 'student') {
     <main class="main-content">
         <section class="welcome-section">
             <h1>Email Assistant</h1>
-            <p class="text-muted">Generate professional emails for your academic needs</p>
+            <p class="text-muted">Generate professional emails for your academic needs with AI</p>
         </section>
 
         <div class="card">
             <form id="emailForm" class="space-y-4" method="post">
                 <div class="form-group">
-                    <label class="form-label">Email Type</label>
+                    <label class="form-label">What should the email be about?</label>
                     <div class="input-with-icon">
-                        <i class='bx bx-envelope'></i>
-                        <select id="emailType" name="emailType" class="form-input" required>
-                            <option value="">Select email type</option>
-                            <?php foreach ($templates as $tpl): ?>
-                                <option value="<?php echo $tpl['id']; ?>" data-subject="<?php echo htmlspecialchars($tpl['subject']); ?>" data-body="<?php echo htmlspecialchars($tpl['body']); ?>">
-                                    <?php echo htmlspecialchars($tpl['name']); ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
+                        <i class='bx bx-message-square-detail'></i>
+                        <textarea id="email_prompt" name="email_prompt" class="form-input" rows="4" placeholder="e.g., Write an email to my professor asking for an extension for an assignment." required></textarea>
                     </div>
                 </div>
+
                 <?php if ($user && $user['role'] === 'student' && !empty($courses)): ?>
                 <div class="form-group">
                     <label class="form-label">Recipient (Course, Section & Faculty)</label>
                     <div class="input-with-icon">
                         <i class='bx bx-user'></i>
-                        <select name="course_code" id="course_code_select" class="form-input" required onchange="updateTeacherField()">
-                            <option value="">Select course, section & faculty</option>
+                        <select name="course_code" id="course_code_select" class="form-input" onchange="updateTeacherField()">
+                            <option value="">Select course, section & faculty (Optional)</option>
                             <?php foreach ($courses as $c): ?>
                                 <option value="<?php echo htmlspecialchars($c['course_code']); ?>|<?php echo htmlspecialchars($c['section']); ?>|<?php echo htmlspecialchars($c['teacher']); ?>">
                                     <?php echo htmlspecialchars($c['course_code'] . ' - ' . $c['course_title'] . ' (Section ' . $c['section'] . ') - ' . $c['teacher']); ?>
@@ -102,48 +91,76 @@ if ($user && $user['role'] === 'student') {
                     </div>
                 </div>
                 <?php endif; ?>
-                <div class="form-group">
-                    <label class="form-label">Additional Details</label>
-                    <div class="input-with-icon">
-                        <i class='bx bx-message-square-detail'></i>
-                        <textarea id="details" name="details" class="form-input" rows="4" placeholder="Enter any specific details or requirements..."></textarea>
-                    </div>
-                </div>
                 <button type="submit" class="btn btn-primary">Generate Email</button>
             </form>
 
-            <?php if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['emailType'])): ?>
+            <?php if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email_prompt'])): ?>
                 <?php
-                $tplId = intval($_POST['emailType']);
-                $details = trim($_POST['details'] ?? '');
-                $tpl = null;
-                foreach ($templates as $t) {
-                    if ($t['id'] == $tplId) {
-                        $tpl = $t;
-                        break;
-                    }
-                }
+                $email_prompt = trim($_POST['email_prompt']);
+                
                 $selected_course = '';
                 $selected_section = '';
                 $selected_teacher = '';
-                if (isset($_POST['course_code'])) {
+                if (isset($_POST['course_code']) && !empty($_POST['course_code'])) {
                     list($selected_course, $selected_section, $selected_teacher) = explode('|', $_POST['course_code']);
                 }
-                if ($tpl) {
-                    $body = $tpl['body'];
-                    $body = str_replace('{{name}}', htmlspecialchars($user['name'] ?? ''), $body);
-                    $body = str_replace('{{id}}', htmlspecialchars($university_id), $body);
-                    $body = str_replace('{{course}}', htmlspecialchars($selected_course), $body);
-                    $body = str_replace('{{section}}', htmlspecialchars($selected_section), $body);
-                    $body = str_replace('{{teacher}}', htmlspecialchars($selected_teacher), $body);
-                    $body = str_replace('{{courses}}', htmlspecialchars($details), $body);
-                    $body = nl2br($body);
-                    $subject = $tpl['subject'];
+
+                // Your Groq API key. 
+                // IMPORTANT: In a production environment, move this to a secure configuration file or environment variable.
+                $apiKey = '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';
+
+                // Construct a detailed prompt for the AI.
+                $prompt_for_ai = "Generate a professional email subject and body based on the following details.\n\n" .
+                               "Student Name: " . ($user['name'] ?? 'N/A') . "\n" .
+                               "Student ID: " . ($university_id ?? 'N/A') . "\n" .
+                               "Course: " . ($selected_course ?: 'N/A') . "\n" .
+                               "Section: " . ($selected_section ?: 'N/A') . "\n" .
+                               "Recipient/Teacher: " . ($selected_teacher ?: 'N/A') . "\n\n" .
+                               "User's instruction: " . $email_prompt . "\n\n" .
+                               "Generate a JSON object with 'subject' and 'body' keys. Do not include any other text or formatting.";
+
+                $data = [
+                    'model' => 'llama3-8b-8192',
+                    'messages' => [['role' => 'user', 'content' => $prompt_for_ai]],
+                    'response_format' => ['type' => 'json_object']
+                ];
+
+                $ch = curl_init('https://api.groq.com/openai/v1/chat/completions');
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_POST, true);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+                curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                    'Content-Type: application/json',
+                    'Authorization: Bearer ' . $apiKey
+                ]);
+
+                $response = curl_exec($ch);
+                curl_close($ch);
+
+                $subject = 'Error: Could not generate email';
+                $body = 'There was an issue communicating with the AI service. Please check the API key and network connection.';
+
+                if ($response) {
+                    $result = json_decode($response, true);
+                    if (isset($result['choices'][0]['message']['content'])) {
+                        $email_content_raw = $result['choices'][0]['message']['content'];
+                        $email_content = json_decode($email_content_raw, true);
+                        
+                        if (json_last_error() === JSON_ERROR_NONE && isset($email_content['subject']) && isset($email_content['body'])) {
+                            $subject = htmlspecialchars($email_content['subject']);
+                            $body = nl2br(htmlspecialchars($email_content['body']));
+                        } else {
+                            $body = 'The AI returned an invalid format. Raw response: <pre>' . htmlspecialchars($email_content_raw) . '</pre>';
+                        }
+                    } elseif (isset($result['error'])) {
+                        $body = 'API Error: ' . htmlspecialchars($result['error']['message']);
+                    }
+                }
                 ?>
                 <div id="emailPreview" class="mt-6">
                     <h3 class="text-lg font-semibold mb-4">Generated Email</h3>
                     <div class="card bg-muted p-4">
-                        <strong>Subject:</strong> <?php echo htmlspecialchars($subject); ?><br><br>
+                        <strong>Subject:</strong> <?php echo $subject; ?><br><br>
                         <div><?php echo $body; ?></div>
                     </div>
                     <button onclick="copyEmailContent()" class="btn btn-secondary mt-4">Copy to Clipboard</button>
@@ -151,7 +168,14 @@ if ($user && $user['role'] === 'student') {
                 <script>
                 function copyEmailContent() {
                     const el = document.createElement('textarea');
-                    el.value = `Subject: <?php echo addslashes($subject); ?>\n\n<?php echo addslashes(strip_tags($body)); ?>`;
+                    // Create a temporary div to decode HTML entities for the body
+                    var tempDiv = document.createElement("div");
+                    tempDiv.innerHTML = `<?php echo addslashes($body); ?>`;
+                    var decodedBody = tempDiv.textContent || tempDiv.innerText || "";
+                    // Replace <br> and <br /> with newlines for plain text copy
+                    var plainTextBody = decodedBody.replace(/<br\s*\/?>/gi, '\n');
+
+                    el.value = `Subject: <?php echo addslashes($subject); ?>\n\n${plainTextBody}`;
                     document.body.appendChild(el);
                     el.select();
                     document.execCommand('copy');
@@ -180,7 +204,7 @@ if ($user && $user['role'] === 'student') {
                     updateTeacherField();
                 });
                 </script>
-                <?php }
+                <?php
             endif; ?>
         </div>
     </main>
