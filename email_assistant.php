@@ -105,9 +105,9 @@ if ($user && $user['role'] === 'student') {
                     list($selected_course, $selected_section, $selected_teacher) = explode('|', $_POST['course_code']);
                 }
 
-                // Your Groq API key. 
-                // IMPORTANT: In a production environment, move this to a secure configuration file or environment variable.
-                $apiKey = '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';
+                // Load the API key from the secrets file.
+                $secrets = require __DIR__ . '/config/secrets.php';
+                $apiKey = $secrets['GROQ_API_KEY'];
 
                 // Construct a detailed prompt for the AI.
                 $prompt_for_ai = "Generate a professional email subject and body based on the following details, keep the details on bottom of the email.\n\n" .
