@@ -210,40 +210,6 @@ if (isset($_SESSION['faculty_name'])) {
                 <!-- Right Column: Add Counselling, Pending Requests, Accepted Calendar -->
                 <div class="content-stack" style="display: flex; flex-direction: column; gap: 1.5rem;">
                     <section class="card mb-6">
-                        <h2 class="text-xl font-semibold mb-4"><i class='bx bx-calendar-plus'></i> Add Counselling Schedule</h2>
-                        <form method="POST" class="flex flex-wrap gap-4 items-end">
-                            <input type="hidden" name="add_counselling" value="1">
-                            <div>
-                                <label>Day</label>
-                                <select name="day_of_week" required class="form-input">
-                                    <option value="">Select Day</option>
-                                    <option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label>Start Time</label>
-                                <input type="time" name="start_time" required class="form-input">
-                            </div>
-                            <div>
-                                <label>End Time</label>
-                                <input type="time" name="end_time" required class="form-input">
-                            </div>
-                            <button type="submit" class="btn btn-primary">Add</button>
-                        </form>
-                        <div class="mt-4">
-                            <h3 class="font-medium mb-2">Your Counselling Times</h3>
-                            <ul class="list">
-                                <?php if (empty($counselling_times)): ?>
-                                    <li class="empty-state"><i class='bx bx-time'></i> No counselling times set.</li>
-                                <?php else: ?>
-                                    <?php foreach ($counselling_times as $ct): ?>
-                                        <li><?php echo htmlspecialchars($ct['day_of_week'] . ': ' . $ct['start_time'] . ' - ' . $ct['end_time']); ?></li>
-                                    <?php endforeach; ?>
-                                <?php endif; ?>
-                            </ul>
-                        </div>
-                    </section>
-                    <section class="card mb-6">
                         <h2 class="text-xl font-semibold mb-4"><i class='bx bx-envelope'></i> Pending Counselling Requests</h2>
                         <?php if (empty($pending_requests)): ?>
                             <div class="empty-state"><i class='bx bx-message-square-x'></i> No pending requests.</div>
