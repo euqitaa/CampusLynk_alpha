@@ -8,3 +8,4 @@ pip install pandas
 
 after that restart everything run project it will work.
 accordingly next plan is to upgrade the exam schedule importing and current class schedule.
+composer require vlucas/phpdotenv
