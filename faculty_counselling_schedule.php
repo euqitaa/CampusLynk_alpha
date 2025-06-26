@@ -156,8 +156,8 @@ try {
             width: 100%;
             height: 100%;
         }
-        .slot-class { background-color: #ffebee; color: #c62828; }
-        .slot-counselling { background-color: #e8f5e9; color: #2e7d32; }
+        .slot-class { background-color: #ef9a9a; color: #b71c1c; font-weight: 600; }
+        .slot-counselling { background-color: #a5d6a7; color: #1b5e20; font-weight: 600;}
         .slot-free { background-color: #ffffff; }
         .slot-disabled {
             background-color: #fce4e4;
@@ -204,10 +204,14 @@ try {
                                         <td><?php echo $day; ?></td>
                                         <?php foreach ($timeslots as $slot):
                                             $status = $schedule_grid[$day][$slot];
-                                            $class = 'slot-' . $status;
-                                            $text = ucfirst($status);
-                                            if ($status === 'class') $text = 'Class';
-                                            if ($status === 'free') $text = 'Class';
+                                            
+                                            if ($status === 'counselling') {
+                                                $class = 'slot-counselling';
+                                                $text = 'Counselling';
+                                            } else {
+                                                $class = 'slot-class';
+                                                $text = 'Class';
+                                            }
                                             ?>
                                             <td class="<?php echo $class; ?>"><?php echo $text; ?></td>
                                         <?php endforeach; ?>
