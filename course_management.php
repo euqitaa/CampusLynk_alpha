@@ -100,14 +100,9 @@ try {
 <body>
     <?php include 'sidebar.php'; ?>
     <main class="main-content">
-        <section class="page-header" style="display: flex; align-items: center; gap: 1.5rem; background: var(--muted); border-radius: var(--radius-lg); padding: 2.5rem 2rem 2rem 2rem; margin-bottom: 2.5rem;">
-            <div style="background: var(--primary); color: var(--primary-foreground); border-radius: 50%; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; font-size: 2.2rem;">
-                <i class='bx bxs-book-content'></i>
-            </div>
-            <div>
-                <h1 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.25rem;">Course Management</h1>
-                <p class="text-muted" style="font-size: 1.1rem;">Manage your enrolled courses</p>
-            </div>
+        <section class="welcome-section">
+            <h1>Course Management</h1>
+            <p class="text-muted">Manage your enrolled courses</p>
         </section>
         <?php if ($success): ?>
             <div class="alert alert-success"><?php echo htmlspecialchars($success); ?></div>
