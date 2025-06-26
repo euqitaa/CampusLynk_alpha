@@ -88,30 +88,27 @@ try {
         <?php if (isset($_GET['error'])): ?>
             <div class="alert alert-danger"><?php echo htmlspecialchars($_GET['error']); ?></div>
         <?php endif; ?>
-
-        <section class="enrolled-courses">
-            <h2>My Courses</h2>
-            <div class="courses-list">
-                <?php if (empty($enrolled_courses)): ?>
-                    <p>You are not enrolled in any courses.</p>
-                <?php else: ?>
-                    <?php foreach ($enrolled_courses as $course): ?>
-                        <div class="course-item">
-                            <div class="course-details">
-                                <h3 class="course-title"><?php echo htmlspecialchars($course['course_title']); ?></h3>
-                                <p class="course-meta"><?php echo htmlspecialchars($course['course_code']); ?> - Section <?php echo htmlspecialchars($course['section']); ?></p>
-                            </div>
-                            <form action="unenroll.php" method="POST" onsubmit="return confirm('Are you sure you want to unenroll from this course?');">
-                                <input type="hidden" name="enrollment_id" value="<?php echo $course['enrollment_id']; ?>">
-                                <button type="submit" class="btn-unenroll">
-                                    <i class='bx bx-trash'></i>
-                                    <span>Remove</span>
-                                </button>
-                            </form>
-                        </div>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </div>
+        <section class="profile-edit-section">
+            <h2>Edit Profile</h2>
+            <form action="update_profile.php" method="POST" class="form-grid" style="max-width: 420px;">
+                <div class="form-group">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" name="name" id="name" class="form-input" value="<?php echo htmlspecialchars($user['name']); ?>" required>
+                </div>
+                <div class="form-group">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" name="email" id="email" class="form-input" value="<?php echo htmlspecialchars($user['email']); ?>" required>
+                </div>
+                <div class="form-group">
+                    <label for="current_password" class="form-label">Current Password</label>
+                    <input type="password" name="current_password" id="current_password" class="form-input" required placeholder="Enter current password to save changes">
+                </div>
+                <div class="form-group">
+                    <label for="new_password" class="form-label">New Password <span style="color: #888; font-weight: 400;">(leave blank to keep current)</span></label>
+                    <input type="password" name="new_password" id="new_password" class="form-input" placeholder="Enter new password (optional)">
+                </div>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </form>
         </section>
     </main>
 </body>

@@ -25,7 +25,7 @@ if ($user && $user['role'] === 'student') {
 // Fetch enrolled courses/sections with teacher info
 $courses = [];
 if ($user && $user['role'] === 'student') {
-    $stmt = $db->prepare("SELECT uc.course_code, uc.course_title, se.section, es.teacher FROM student_enrollments se JOIN upcoming_courses uc ON se.course_id = uc.id LEFT JOIN exam_schedules es ON uc.course_code = es.course_code AND se.section = es.section WHERE se.student_id = ? GROUP BY uc.course_code, se.section");
+    $stmt = $db->prepare("SELECT uc.course_code, uc.course_title, se.section, uc.faculty_name AS teacher FROM student_enrollments se JOIN upcoming_courses uc ON se.course_id = uc.id WHERE se.student_id = ? GROUP BY uc.course_code, se.section");
     $stmt->execute([$user['id']]);
     $courses = $stmt->fetchAll();
 }
@@ -107,10 +107,10 @@ if ($user && $user['role'] === 'student') {
 
                 // Your Groq API key. 
                 // IMPORTANT: In a production environment, move this to a secure configuration file or environment variable.
-                $apiKey = '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';
+                $apiKey = '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';
 
                 // Construct a detailed prompt for the AI.
-                $prompt_for_ai = "Generate a professional email subject and body based on the following details.\n\n" .
+                $prompt_for_ai = "Generate a professional email subject and body based on the following details, keep the details on bottom of the email.\n\n" .
                                "Student Name: " . ($user['name'] ?? 'N/A') . "\n" .
                                "Student ID: " . ($university_id ?? 'N/A') . "\n" .
                                "Course: " . ($selected_course ?: 'N/A') . "\n" .

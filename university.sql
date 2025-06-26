@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 24, 2025 at 11:25 AM
+-- Generation Time: Jun 26, 2025 at 05:51 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -60,18 +60,6 @@ CREATE TABLE `counselling_times` (
   `start_time` time NOT NULL,
   `end_time` time NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `counselling_times`
---
-
-INSERT INTO `counselling_times` (`id`, `faculty_id`, `day_of_week`, `start_time`, `end_time`) VALUES
-(1, 1, 'Saturday', '09:00:00', '11:00:00'),
-(2, 1, 'Sunday', '12:00:00', '01:00:00'),
-(3, 1, 'Tuesday', '09:00:00', '11:00:00'),
-(4, 1, 'Wednesday', '12:00:00', '02:00:00'),
-(5, 2, 'Saturday', '02:30:00', '03:00:00'),
-(6, 2, 'Sunday', '11:30:00', '12:00:00');
 
 -- --------------------------------------------------------
 
@@ -1269,17 +1257,96 @@ INSERT INTO `exam_schedules` (`id`, `department`, `course_code`, `course_title`,
 CREATE TABLE `faculty` (
   `id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `department` varchar(255) DEFAULT NULL
+  `designation` varchar(255) NOT NULL,
+  `email` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `faculty`
 --
 
-INSERT INTO `faculty` (`id`, `name`, `email`, `department`) VALUES
-(1, 'John Doe', 'john.doe@example.com', 'Computer Science'),
-(2, 'Mahatab Uddin', 'mahatab@gmail.com', 'Computer Science');
+INSERT INTO `faculty` (`id`, `name`, `designation`, `email`) VALUES
+(3, 'Dr. Md. Abul Kashem Mia', 'Vice Chancellor', 'kashem@uiu.ac.bd'),
+(4, 'Dr. Hasan Sarwar', 'Professor', 'hsarwar@cse.uiu.ac.bd'),
+(5, 'Dr. Mohammad Nurul Huda', 'Professor', 'mnh@cse.uiu.ac.bd'),
+(6, 'Dr. Khondaker Abdullah -Al-Mamun', 'Professor', 'mamun@cse.uiu.ac.bd'),
+(7, 'Dr. A.K.M. Muzahidul Islam', 'Professor', 'muzahid@cse.uiu.ac.bd'),
+(8, 'Dr. Md. Motaharul Islam', 'Professor', 'motaharul@cse.uiu.ac.bd'),
+(9, 'Dr. Al-Sakib Khan Pathan', 'Professor', 'sakib@cse.uiu.ac.bd'),
+(10, 'Dr. Muhammad Nomani Kabir', 'Professor', 'kabir@cse.uiu.ac.bd'),
+(11, 'Dr. Suman Ahmmed', 'Associate Professor', 'suman@cse.uiu.ac.bd'),
+(12, 'Dr. Jannatun Noor Mukta', 'Associate Professor', 'jannatun@cse.uiu.ac.bd'),
+(13, 'Dr. Riasat Azim', 'Assistant Professor', 'riasat@cse.uiu.ac.bd'),
+(14, 'Dr. Ohidujjaman', 'Assistant Professor', 'ohidujjaman@cse.uiu.ac.bd'),
+(15, 'Mohammad Mamun Elahi', 'Assistant Professor', 'mmelahi@cse.uiu.ac.bd'),
+(16, 'Rubaiya Rahtin Khan', 'Assistant Professor', 'rubaiya@cse.uiu.ac.bd'),
+(17, 'Md. Benzir Ahmed', 'Assistant Professor', 'benzir@cse.uiu.ac.bd'),
+(18, 'Nahid Hossain', 'Assistant Professor', 'nahid@cse.uiu.ac.bd'),
+(19, 'Sadia Islam', 'Assistant Professor', 'sadia@cse.uiu.ac.bd'),
+(20, 'Mir Moynuddin Ahmed Shibly', 'Assistant Professor', 'moynuddin@cse.uiu.ac.bd'),
+(21, 'Khushnur Binte Jahangir', 'Lecturer', 'khushnur@cse.uiu.ac.bd'),
+(22, 'Minhajul Bashir', 'Lecturer', 'minhajul@cse.uiu.ac.bd'),
+(23, 'Shoib Ahmed Shourav', 'Lecturer', 'shoib@cse.uiu.ac.bd'),
+(24, 'Nabila Sabrin Sworna', 'Lecturer', 'nabila@cse.uiu.ac.bd'),
+(25, 'Farhan Anan Himu', 'Lecturer', 'himu@cse.uiu.ac.bd'),
+(26, 'Anika Tasnim Rodela', 'Lecturer', 'anika@cse.uiu.ac.bd'),
+(27, 'Md. Mohaiminul Islam', 'Lecturer', 'mohaiminul@cse.uiu.ac.bd'),
+(28, 'Fahim Hafiz', 'Lecturer', 'fahimhafiz@cse.uiu.ac.bd'),
+(29, 'Md. Romizul Islam', 'Lecturer', 'romizul@cse.uiu.ac.bd'),
+(30, 'Md. Tarek Hasan', 'Lecturer', 'tarek@cse.uiu.ac.bd'),
+(31, 'Samin Sharaf Somik', 'Lecturer', 'samin@cse.uiu.ac.bd'),
+(32, 'Rahad Khan', 'Lecturer', 'rahad@cse.uiu.ac.bd'),
+(33, 'Iftekharul Abedeen', 'Lecturer', 'iftekharul@cse.uiu.ac.bd'),
+(34, 'Kazi Abdun Noor', 'Lecturer', 'abdunnoor@cse.uiu.ac.bd'),
+(35, 'Md. Muhyminul Haque', 'Lecturer', 'muhyminul@cse.uiu.ac.bd'),
+(36, 'Md. Shadman Aadeeb', 'Lecturer', 'shadman@cse.uiu.ac.bd'),
+(37, 'Md. Salman Shamil', 'Lecturer', 'salman@cse.uiu.ac.bd'),
+(38, 'Nusrat Jahan Tithi', 'Lecturer', 'nusrat@cse.uiu.ac.bd'),
+(39, 'Umama Rahman', 'Lecturer', 'umama@cse.uiu.ac.bd'),
+(40, 'Abdullah Al Jobair', 'Lecturer', 'jobair@cse.uiu.ac.bd'),
+(41, 'Fahmid Al Rifat', 'Lecturer', 'fahmid@cse.uiu.ac.bd'),
+(42, 'Sk. Md. Tauseef Tajwar', 'Lecturer', 'tauseef@cse.uiu.ac.bd'),
+(43, 'Charles Aunkan Gomes', 'Lecturer', 'charles@cse.uiu.ac.bd'),
+(44, 'Md. Shafqat Talukder', 'Lecturer', 'shafqat@cse.uiu.ac.bd'),
+(45, 'Md. Tamzid Hossain', 'Lecturer', 'tamzid@cse.uiu.ac.bd'),
+(46, 'Asif Ahmed Utsa', 'Lecturer', 'asif@cse.uiu.ac.bd'),
+(47, 'Md. Tanvir Raihan', 'Lecturer', 'tanvir@cse.uiu.ac.bd'),
+(48, 'Sidratul Muntaha', 'Lecturer', 'sidratul@cse.uiu.ac.bd'),
+(49, 'Taki Yashir', 'Lecturer', 'taki@cse.uiu.ac.bd'),
+(50, 'Md. Nafis Tahmid Akhand', 'Lecturer', 'tahmid@cse.uiu.ac.bd'),
+(51, 'Md. Abid Hossain', 'Lecturer', 'abid@cse.uiu.ac.bd'),
+(52, 'Asnuva Tanvin', 'Lecturer', 'tanvin@cse.uiu.ac.bd'),
+(53, 'Tahmid Mosaddeque', 'Lecturer', 'mosaddeque@cse.uiu.ac.bd'),
+(54, 'Tasmin Sanjida', 'Lecturer', 'sanjida@cse.uiu.ac.bd'),
+(55, 'Rabeya Hossain', 'Lecturer', 'rabeya@cse.uiu.ac.bd'),
+(56, 'Azizur Rahman Anik', 'Lecturer', 'azizur@cse.uiu.ac.bd'),
+(57, 'A.H.M. Osama Haque', 'Lecturer', 'osama@cse.uiu.ac.bd'),
+(58, 'Abu Humayed Azim Fahmid', 'Lecturer', 'humayed@cse.uiu.ac.bd'),
+(59, 'Khandokar Md. Rahat Hossain', 'Lecturer', 'rahat@cse.uiu.ac.bd'),
+(60, 'Noman Asif Aditya', 'Lecturer', 'aditya@cse.uiu.ac.bd'),
+(61, 'Nabila Tasfiha Rahman', 'Lecturer', 'tasfiha@cse.uiu.ac.bd'),
+(62, 'Md. Mushfiqul Haque Omi', 'Lecturer', 'mushfiqul@cse.uiu.ac.bd'),
+(63, 'Tanmoy Bipro Das', 'Lecturer', 'tanmoy@cse.uiu.ac.bd'),
+(64, 'Humaira Anzum Neha', 'Lecturer', 'humaira@cse.uiu.ac.bd'),
+(65, 'M. Fahmin Rahman', 'Lecturer', 'fahmin@cse.uiu.ac.bd'),
+(66, 'Redwanul Mahbub Talukder', 'Lecturer', 'redwanul@cse.uiu.ac.bd'),
+(67, 'Md. Irfanur Rahman Rafio', 'Lecturer', 'irfanur@cse.uiu.ac.bd'),
+(68, 'Shekh Md. Saifur Rahman', 'Lecturer', 'saifur@cse.uiu.ac.bd'),
+(69, 'Shihab Ahmed', 'Lecturer', 'shihab@cse.uiu.ac.bd'),
+(70, 'Sidratul Tanzila Tasmi', 'Lecturer', 'tanzila@cse.uiu.ac.bd'),
+(71, 'Sherajul Arifin', 'Lecturer', 'sherajul@cse.uiu.ac.bd'),
+(72, 'Mobaswirul Islam', 'Lecturer', 'mobaswirul@cse.uiu.ac.bd'),
+(73, 'Abdullah Ibne Masud Mahi', 'Lecturer', 'ibnemasud@cse.uiu.ac.bd'),
+(74, 'Mahmudul Hasan', 'Lecturer', 'mahmudul@cse.uiu.ac.bd'),
+(75, 'Muhammad Anwarul Azim', 'Lecturer', 'anwarul@cse.uiu.ac.bd'),
+(76, 'Sajid Ahmed Chowdhury', 'Lecturer', 'sajidahmed@cse.uiu.ac.bd'),
+(77, 'Sabah Ahmed', 'Lecturer', 'sabah@cse.uiu.ac.bd'),
+(78, 'Rakib Ahsan', 'Lecturer', 'rakib@cse.uiu.ac.bd'),
+(79, 'Rakibul Hasan Rafi', 'Lecturer', 'rakibulhasan@cse.uiu.ac.bd'),
+(80, 'Md. Muhaiminul Islam Nafi', 'Lecturer', 'muhaiminul@cse.uiu.ac.bd'),
+(81, 'Imran Hossain', 'Lecturer', 'imran@cse.uiu.ac.bd'),
+(82, 'Fairoz Anika', 'Lecturer', 'fairoz@cse.uiu.ac.bd'),
+(83, 'Didarul Islam Didar', 'Lecturer', 'didarul@cse.uiu.ac.bd');
 
 -- --------------------------------------------------------
 
@@ -1302,7 +1369,9 @@ INSERT INTO `student_enrollments` (`id`, `student_id`, `course_id`, `section`) V
 (51, 19, 530, 'I'),
 (53, 19, 4, 'AB'),
 (56, 20, 3, 'AA'),
-(57, 20, 437, 'A');
+(57, 20, 437, 'A'),
+(58, 21, 3, 'AA'),
+(59, 21, 441, 'E');
 
 -- --------------------------------------------------------
 
@@ -2034,7 +2103,8 @@ INSERT INTO `users` (`id`, `username`, `email`, `password`, `role`, `name`) VALU
 (16, 'adminatq', 'atq@campuslynk.com', '$2y$10$/nCxrvLLyiHDR2GOYQB.U.hESZn2neOp4wgfCZILcLpYPKNm4VZAi', 'admin', 'atq'),
 (17, 'ibnemasud', 'ibnemasud@cse.uiu.ac.bd', '$2y$10$3lPTlvprSRePxSMq5Uerle.fmbjOcfycR2jWjVyZPwmsUyHcEZg0u', 'faculty', 'Ibne Masud'),
 (19, 'imrthedragon', 'iriyadh221521@bscse.uiu.ac.bd', '$2y$10$BGCQko1O7pLl.fvow1xkqeq/IkzvDMPK45UaOXmW8.qln/ybiI.de', 'student', 'Ilham Mahfuz Riyadh'),
-(20, 'hasnat', 'ahasnat221436@bscse.uiu.ac.bd', '$2y$10$9.bjKN7uftfyPQ.7zdGA6.Ddoht7Y9vHI6SEaokww4pRsHQiCunhu', 'student', 'Abu Hasnat');
+(20, 'hasnat', 'ahasnat221436@bscse.uiu.ac.bd', '$2y$10$9.bjKN7uftfyPQ.7zdGA6.Ddoht7Y9vHI6SEaokww4pRsHQiCunhu', 'student', 'Abu Hasnat'),
+(21, 'emad', 'emad200105@gmail.com', '$2y$10$FtgmRa0OPjcOticyJt1JzunDFhFnr8rNU8M7/gAVa6mv.ivbbP1aq', 'student', 'Hasnat Emad');
 
 --
 -- Indexes for dumped tables
@@ -2155,13 +2225,13 @@ ALTER TABLE `exam_schedules`
 -- AUTO_INCREMENT for table `faculty`
 --
 ALTER TABLE `faculty`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=84;
 
 --
 -- AUTO_INCREMENT for table `student_enrollments`
 --
 ALTER TABLE `student_enrollments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
 
 --
 -- AUTO_INCREMENT for table `upcoming_courses`
@@ -2173,7 +2243,7 @@ ALTER TABLE `upcoming_courses`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- Constraints for dumped tables

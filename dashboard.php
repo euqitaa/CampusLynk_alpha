@@ -65,6 +65,46 @@ try {
     $eventStmt = $db->query("SELECT COUNT(*) FROM events");
     $eventCount = $eventStmt->fetchColumn();
 
+    // Fetch next upcoming event
+    $eventStmt = $db->query("SELECT * FROM events WHERE date >= CURDATE() ORDER BY date ASC LIMIT 1");
+    $nextEvent = $eventStmt->fetch(PDO::FETCH_ASSOC);
+
+    // Fetch next upcoming exam for this student
+    $examStmt = $db->prepare("
+        SELECT es.* FROM student_enrollments se
+        JOIN upcoming_courses uc ON se.course_id = uc.id
+        JOIN exam_schedules es ON es.course_code = uc.course_code AND es.section = se.section
+        WHERE se.student_id = ? AND es.exam_date >= CURDATE()
+        ORDER BY es.exam_date ASC, es.exam_time ASC LIMIT 1
+    ");
+    $examStmt->execute([$userId]);
+    $nextExam = $examStmt->fetch(PDO::FETCH_ASSOC);
+
+    // Fetch most recent study material for enrolled courses
+    $latestMaterial = null;
+    $latestMaterialTime = 0;
+    foreach ($materialCourses as $courseCode) {
+        $dir = __DIR__ . "/study_materials/" . $courseCode;
+        if (is_dir($dir)) {
+            $files = glob($dir . "/*.pdf");
+            foreach ($files as $file) {
+                $fileTime = filemtime($file);
+                if ($fileTime > $latestMaterialTime) {
+                    $latestMaterialTime = $fileTime;
+                    $latestMaterial = [
+                        'course_code' => $courseCode,
+                        'file' => basename($file),
+                        'date' => date('M d, Y H:i', $fileTime)
+                    ];
+                }
+            }
+        }
+    }
+
+    // Fetch most recent routine update (from upcoming_courses table by latest id or updated_at if available)
+    $routineStmt = $db->query("SELECT * FROM upcoming_courses ORDER BY id DESC LIMIT 1");
+    $latestRoutine = $routineStmt->fetch(PDO::FETCH_ASSOC);
+
 } catch (PDOException $e) {
     header("Location: login.php?error=Database Error: " . urlencode($e->getMessage()));
     exit();
@@ -139,7 +179,7 @@ if (isset($_SESSION['department']) && isset($_SESSION['section'])) {
         </section>
 
         <div class="quick-access-row">
-            <div class="quick-access-card border-purple">
+            <div class="quick-access-card glow-purple">
                 <div class="quick-access-card-content">
                     <div class="quick-access-number"><?php echo $courseCount; ?></div>
                     <div class="quick-access-label">Courses</div>
@@ -149,7 +189,7 @@ if (isset($_SESSION['department']) && isset($_SESSION['section'])) {
                 </div>
             </div>
 
-            <div class="quick-access-card border-yellow">
+            <div class="quick-access-card glow-yellow">
                 <div class="quick-access-card-content">
                     <div class="quick-access-number"><?php echo $requestCount; ?></div>
                     <div class="quick-access-label">Requests</div>
@@ -159,7 +199,7 @@ if (isset($_SESSION['department']) && isset($_SESSION['section'])) {
                 </div>
             </div>
 
-            <div class="quick-access-card border-pink">
+            <div class="quick-access-card glow-pink">
                 <div class="quick-access-card-content">
                     <div class="quick-access-number"><?php echo $materialCount; ?></div>
                     <div class="quick-access-label">Materials</div>
@@ -169,7 +209,7 @@ if (isset($_SESSION['department']) && isset($_SESSION['section'])) {
                 </div>
             </div>
 
-            <div class="quick-access-card border-blue">
+            <div class="quick-access-card glow-blue">
                 <div class="quick-access-card-content">
                     <div class="quick-access-number"><?php echo $eventCount; ?></div>
                     <div class="quick-access-label">Events</div>
@@ -182,52 +222,53 @@ if (isset($_SESSION['department']) && isset($_SESSION['section'])) {
 
         <div class="content-stack">
             <div class="card">
-                <h2 class="text-xl font-semibold mb-4">Recent Activities</h2>
-                <div class="space-y-4">
-                    <div class="flex items-center gap-4 p-3 bg-muted rounded-lg">
-                        <i class='bx bxs-book text-primary'></i>
-                        <div>
-                            <h3 class="font-medium">New Study Material</h3>
-                            <p class="text-sm text-muted">Database Management Notes uploaded</p>
+                <h2 class="text-xl font-semibold mb-4">Overview</h2>
+                <div class="dashboard-overview-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                    <?php if ($nextEvent): ?>
+                    <div class="overview-card">
+                        <div class="overview-icon"><i class='bx bxs-calendar text-primary'></i></div>
+                        <div class="overview-content">
+                            <h3 class="overview-title">Upcoming Event</h3>
+                            <div class="overview-main"><?php echo htmlspecialchars($nextEvent['title']); ?></div>
+                            <div class="overview-desc"><?php echo htmlspecialchars($nextEvent['description']); ?></div>
+                            <div class="overview-date"><?php echo date('M d, Y', strtotime($nextEvent['date'])); ?></div>
                         </div>
                     </div>
-                    <div class="flex items-center gap-4 p-3 bg-muted rounded-lg">
-                        <i class='bx bxs-calendar text-primary'></i>
-                        <div>
-                            <h3 class="font-medium">Upcoming Event</h3>
-                            <p class="text-sm text-muted">Tech Seminar on Friday</p>
+                    <?php endif; ?>
+                    <?php if ($nextExam): ?>
+                    <div class="overview-card">
+                        <div class="overview-icon"><i class='bx bxs-time-five text-primary'></i></div>
+                        <div class="overview-content">
+                            <h3 class="overview-title">Upcoming Exam</h3>
+                            <div class="overview-main"><?php echo htmlspecialchars($nextExam['course_title']); ?></div>
+                            <div class="overview-desc">Date: <?php echo date('M d, Y', strtotime($nextExam['exam_date'])); ?> | Time: <?php echo htmlspecialchars($nextExam['exam_time']); ?> | Room: <?php echo htmlspecialchars($nextExam['room']); ?></div>
                         </div>
                     </div>
+                    <?php endif; ?>
+                    <?php if ($latestMaterial): ?>
+                    <div class="overview-card">
+                        <div class="overview-icon"><i class='bx bxs-book text-primary'></i></div>
+                        <div class="overview-content">
+                            <h3 class="overview-title">New Study Material</h3>
+                            <div class="overview-main"><?php echo htmlspecialchars($latestMaterial['file']); ?></div>
+                            <div class="overview-desc">Course: <?php echo htmlspecialchars($latestMaterial['course_code']); ?> | Uploaded: <?php echo $latestMaterial['date']; ?></div>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+                    <?php if ($latestRoutine): ?>
+                    <div class="overview-card">
+                        <div class="overview-icon"><i class='bx bxs-calendar-check text-primary'></i></div>
+                        <div class="overview-content">
+                            <h3 class="overview-title">Routine Updated</h3>
+                            <div class="overview-main"><?php echo htmlspecialchars($latestRoutine['course_title']); ?> (<?php echo htmlspecialchars($latestRoutine['course_code']); ?>)</div>
+                            <div class="overview-desc">Section: <?php echo htmlspecialchars($latestRoutine['section']); ?></div>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+                    <?php if (!$nextEvent && !$nextExam && !$latestMaterial && !$latestRoutine): ?>
+                    <div class="overview-card empty"><div class="overview-content"><div class="overview-title">No recent updates.</div></div></div>
+                    <?php endif; ?>
                 </div>
-            </div>
-            <div class="card">
-                <h2 class="card-title">Enroll in a Course</h2>
-                <form action="enroll.php" method="POST" id="enroll-form" class="form-grid">
-                    <div class="form-group">
-                        <label for="course" class="form-label">Course</label>
-                        <div class="input-with-icon">
-                            <i class='bx bx-book'></i>
-                            <select name="course_code" id="course" class="form-input">
-                                <option value="">-- Select a Course --</option>
-                                <?php foreach ($courses as $course): ?>
-                                    <option value="<?php echo htmlspecialchars($course['course_code']); ?>">
-                                        <?php echo htmlspecialchars($course['course_title']) . ' (' . htmlspecialchars($course['course_code']) . ')'; ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="section" class="form-label">Section</label>
-                        <div class="input-with-icon">
-                            <i class='bx bx-grid'></i>
-                            <select name="section" id="section" class="form-input" disabled>
-                                <option value="">-- Select a Course First --</option>
-                            </select>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-block">Enroll</button>
-                </form>
             </div>
         </div>
     </main>

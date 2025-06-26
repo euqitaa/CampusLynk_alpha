@@ -132,6 +132,12 @@ $role = $sidebar_user['role'];
                     </a>
                 </li>
                 <li>
+                    <a href="course_management.php" class="nav-link <?php echo $current_page === 'course_management.php' ? 'active' : ''; ?>">
+                        <i class='bx bx-book-content'></i>
+                        <span>Course Management</span>
+                    </a>
+                </li>
+                <li>
                     <a href="class_routine1.php" class="nav-link <?php echo $current_page === 'class_routine1.php' ? 'active' : ''; ?>">
                         <i class='bx bxs-calendar'></i>
                         <span>Class Routine</span>
