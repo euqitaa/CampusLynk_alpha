@@ -38,6 +38,15 @@ body {
   gap: 0.5rem;
   letter-spacing: -0.01em;
 }
+.navbar-brand.smooth-white {
+  color: #fff !important;
+  text-shadow: 0 2px 16px rgba(0, 124, 240, 0.18), 0 1px 4px rgba(0,0,0,0.08);
+  font-weight: 800;
+  font-size: 1.7rem;
+  letter-spacing: -0.02em;
+  transition: color 0.3s, text-shadow 0.3s;
+  filter: drop-shadow(0 2px 8px rgba(0,198,251,0.10));
+}
 .nav-links {
   display: flex;
   gap: 0.8rem;
@@ -49,7 +58,7 @@ body {
   color: #ffffff !important;
 }
 .btn-primary:hover, .btn-outline:hover, .btn-glass:hover {
-  color: #fff !important;
+  color: hsl(0, 0%, 100%) !important;
 }
 .btn {
   border-radius: 0.8rem;
@@ -293,6 +302,10 @@ body {
   color: #007cf0 !important;
   font-weight: 600;
   text-shadow: 0 1px 4px rgba(255,255,255,0.7);
+}
+
+.btn-login:hover {
+  color: #007cf0 !important;
 }
 
 @media (max-width: 900px) {

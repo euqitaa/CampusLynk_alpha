@@ -56,7 +56,6 @@ try {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="css/components.css">
@@ -64,58 +63,54 @@ try {
 <body>
     <?php include 'sidebar.php'; ?>
     <main class="main-content">
-        <div class="admin-header">
-            <div>
-                <h1 class="text-2xl font-bold">User Management</h1>
-                <p class="text-muted">Manage users and their roles</p>
-            </div>
-        </div>
         <div class="card">
+            <h2 class="text-2xl font-bold mb-6">User Management</h2>
+            <p class="text-muted mb-6">Manage users and their roles</p>
             <div class="card-body">
                 <h3 class="card-title">User List</h3>
                 <?php if (!empty($actionMsg)): ?>
                     <div class="alert alert-success mb-4"><?php echo htmlspecialchars($actionMsg); ?></div>
                 <?php endif; ?>
                 <div style="overflow-x:auto;">
-                <table class="table" style="min-width:900px;">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Username</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($users as $user): ?>
-                        <tr>
-                            <form method="POST" style="display:contents;">
-                                <td><?php echo $user['id']; ?></td>
-                                <td><input type="text" name="edit_name" value="<?php echo htmlspecialchars($user['name']); ?>" class="form-input" style="width:120px;"></td>
-                                <td><?php echo htmlspecialchars($user['username']); ?></td>
-                                <td><input type="email" name="edit_email" value="<?php echo htmlspecialchars($user['email']); ?>" class="form-input" style="width:180px;"></td>
-                                <td>
-                                    <select name="edit_role" class="form-select">
-                                        <option value="student" <?php if($user['role']==='student') echo 'selected'; ?>>Student</option>
-                                        <option value="faculty" <?php if($user['role']==='faculty') echo 'selected'; ?>>Faculty</option>
-                                        <option value="admin" <?php if($user['role']==='admin') echo 'selected'; ?>>Admin</option>
-                                    </select>
-                                </td>
-                                <td style="white-space:nowrap;">
-                                    <input type="hidden" name="edit_user_id" value="<?php echo $user['id']; ?>">
-                                    <button type="submit" class="btn btn-primary btn-sm" style="margin-right:4px;">Save</button>
-                                </form>
-                                <form method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this user?');">
-                                    <input type="hidden" name="delete_user_id" value="<?php echo $user['id']; ?>">
-                                    <button type="submit" class="btn btn-outline btn-sm" <?php if($user['id']===$admin['id']) echo 'disabled'; ?>>Delete</button>
-                                </form>
-                                </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($users as $user): ?>
+                            <tr>
+                                <form method="POST" style="display:contents;">
+                                    <td><?php echo htmlspecialchars($user['id']); ?></td>
+                                    <td><input type="text" name="edit_name" value="<?php echo htmlspecialchars($user['name']); ?>" class="form-input" style="width:120px;"></td>
+                                    <td><?php echo htmlspecialchars($user['username']); ?></td>
+                                    <td><input type="email" name="edit_email" value="<?php echo htmlspecialchars($user['email']); ?>" class="form-input" style="width:180px;"></td>
+                                    <td>
+                                        <select class="form-select" name="edit_role">
+                                            <option value="student" <?php if($user['role']==='student') echo 'selected'; ?>>Student</option>
+                                            <option value="faculty" <?php if($user['role']==='faculty') echo 'selected'; ?>>Faculty</option>
+                                            <option value="admin" <?php if($user['role']==='admin') echo 'selected'; ?>>Admin</option>
+                                        </select>
+                                    </td>
+                                    <td style="white-space:nowrap;">
+                                        <input type="hidden" name="edit_user_id" value="<?php echo $user['id']; ?>">
+                                        <button type="submit" class="btn btn-primary btn-sm" style="margin-right:4px;">Save</button>
+                                    </form>
+                                    <form method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this user?');">
+                                        <input type="hidden" name="delete_user_id" value="<?php echo $user['id']; ?>">
+                                        <button type="submit" class="btn btn-outline btn-sm" <?php if($user['id']===$admin['id']) echo 'disabled'; ?>>Delete</button>
+                                    </form>
+                                    </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

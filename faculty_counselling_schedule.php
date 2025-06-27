@@ -132,9 +132,14 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Counselling Schedule - CampusLynk</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/faculty.css">
     <style>
         .schedule-table {
             width: 100%;
@@ -169,24 +174,61 @@ try {
         }
     </style>
 </head>
-<body class="dashboard-page">
-    <div class="dashboard-container">
-        <?php include 'sidebar.php'; ?>
-        <main class="main-content">
-            <header class="main-header">
-                <h1>Counselling Schedule</h1>
-                <p class="text-muted">Select your available time slots for student counselling.</p>
-            </header>
+<body>
+    <?php include 'sidebar.php'; ?>
+    <main class="main-content">
+        <header class="main-header">
+            <h1>Counselling Schedule</h1>
+            <p class="text-muted">Select your available time slots for student counselling.</p>
+        </header>
 
-            <?php if (isset($_GET['success'])): ?>
-                <div class="alert alert-success"><?php echo htmlspecialchars($_GET['success']); ?></div>
-            <?php endif; ?>
-            <?php if (isset($error_message)): ?>
-                <div class="alert alert-error"><?php echo htmlspecialchars($error_message); ?></div>
-            <?php endif; ?>
+        <?php if (isset($_GET['success'])): ?>
+            <div class="alert alert-success"><?php echo htmlspecialchars($_GET['success']); ?></div>
+        <?php endif; ?>
+        <?php if (isset($error_message)): ?>
+            <div class="alert alert-error"><?php echo htmlspecialchars($error_message); ?></div>
+        <?php endif; ?>
 
-            <div class="card">
-                <?php if ($mode === 'view'): ?>
+        <div class="card">
+            <?php if ($mode === 'view'): ?>
+                <div class="table-container">
+                    <table class="schedule-table">
+                        <thead>
+                            <tr>
+                                <th>Day</th>
+                                <?php foreach ($timeslots as $slot): 
+                                    list($start, $end) = explode('-', $slot);
+                                    echo '<th>' . date('g:i A', strtotime($start)) . ' - ' . date('g:i A', strtotime($end)) . '</th>';
+                                endforeach; ?>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($days as $day): ?>
+                                <tr>
+                                    <td><?php echo $day; ?></td>
+                                    <?php foreach ($timeslots as $slot):
+                                        $status = $schedule_grid[$day][$slot];
+                                        
+                                        if ($status === 'counselling') {
+                                            $class = 'slot-counselling';
+                                            $text = 'Counselling';
+                                        } else {
+                                            $class = 'slot-class';
+                                            $text = 'Class';
+                                        }
+                                        ?>
+                                        <td class="<?php echo $class; ?>"><?php echo $text; ?></td>
+                                    <?php endforeach; ?>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+                <div style="margin-top: 1.5rem; text-align: right;">
+                    <a href="faculty_counselling_schedule.php?mode=edit" class="btn btn-primary">Update Schedule</a>
+                </div>
+            <?php else: // Edit mode ?>
+                <form action="faculty_counselling_schedule.php?mode=edit" method="POST">
                     <div class="table-container">
                         <table class="schedule-table">
                             <thead>
@@ -204,16 +246,19 @@ try {
                                         <td><?php echo $day; ?></td>
                                         <?php foreach ($timeslots as $slot):
                                             $status = $schedule_grid[$day][$slot];
-                                            
-                                            if ($status === 'counselling') {
-                                                $class = 'slot-counselling';
-                                                $text = 'Counselling';
-                                            } else {
-                                                $class = 'slot-class';
-                                                $text = 'Class';
-                                            }
+                                            $is_class = $status === 'class';
+                                            $is_counselling = $status === 'counselling';
                                             ?>
-                                            <td class="<?php echo $class; ?>"><?php echo $text; ?></td>
+                                            <td class="<?php if ($is_class) echo 'slot-disabled'; ?>">
+                                                <?php if ($is_class): ?>
+                                                    Class
+                                                <?php else: ?>
+                                                <label class="time-slot-label">
+                                                    <input type="checkbox" name="schedule[<?php echo $day; ?>][]" value="<?php echo $slot; ?>"
+                                                        <?php if ($is_counselling) echo 'checked'; ?>>
+                                                </label>
+                                                <?php endif; ?>
+                                            </td>
                                         <?php endforeach; ?>
                                     </tr>
                                 <?php endforeach; ?>
@@ -221,54 +266,12 @@ try {
                         </table>
                     </div>
                     <div style="margin-top: 1.5rem; text-align: right;">
-                        <a href="faculty_counselling_schedule.php?mode=edit" class="btn btn-primary">Update Schedule</a>
+                        <a href="faculty_counselling_schedule.php" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Save Schedule</button>
                     </div>
-                <?php else: // Edit mode ?>
-                    <form action="faculty_counselling_schedule.php?mode=edit" method="POST">
-                        <div class="table-container">
-                            <table class="schedule-table">
-                                <thead>
-                                    <tr>
-                                        <th>Day</th>
-                                        <?php foreach ($timeslots as $slot): 
-                                            list($start, $end) = explode('-', $slot);
-                                            echo '<th>' . date('g:i A', strtotime($start)) . ' - ' . date('g:i A', strtotime($end)) . '</th>';
-                                        endforeach; ?>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach ($days as $day): ?>
-                                        <tr>
-                                            <td><?php echo $day; ?></td>
-                                            <?php foreach ($timeslots as $slot):
-                                                $status = $schedule_grid[$day][$slot];
-                                                $is_class = $status === 'class';
-                                                $is_counselling = $status === 'counselling';
-                                                ?>
-                                                <td class="<?php if ($is_class) echo 'slot-disabled'; ?>">
-                                                    <?php if ($is_class): ?>
-                                                        Class
-                                                    <?php else: ?>
-                                                    <label class="time-slot-label">
-                                                        <input type="checkbox" name="schedule[<?php echo $day; ?>][]" value="<?php echo $slot; ?>"
-                                                            <?php if ($is_counselling) echo 'checked'; ?>>
-                                                    </label>
-                                                    <?php endif; ?>
-                                                </td>
-                                            <?php endforeach; ?>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div style="margin-top: 1.5rem; text-align: right;">
-                            <a href="faculty_counselling_schedule.php" class="btn btn-secondary">Cancel</a>
-                            <button type="submit" class="btn btn-primary">Save Schedule</button>
-                        </div>
-                    </form>
-                <?php endif; ?>
-            </div>
-        </main>
-    </div>
+                </form>
+            <?php endif; ?>
+        </div>
+    </main>
 </body>
 </html> 

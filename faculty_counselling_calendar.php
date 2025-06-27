@@ -22,21 +22,19 @@ $faculty = $stmt->fetch(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="css/dashboard.css">
     <link rel="stylesheet" href="css/faculty.css">
 </head>
-<body class="dashboard-page">
-    <div class="dashboard-container">
-        <?php include 'sidebar.php'; ?>
-        <main class="main-content">
-            <section class="welcome-section">
-                <h1>Faculty Counselling Calendar</h1>
-                <p class="text-muted">A calendar view of your accepted counselling sessions will appear here soon.</p>
-            </section>
-            <section class="card mt-6">
-                <div class="text-center text-muted" style="padding: 3rem 0; font-size: 1.2rem;">
-                    <i class='bx bx-calendar' style="font-size:2rem;"></i><br>
-                    Calendar feature coming soon!
-                </div>
-            </section>
-        </main>
-    </div>
+<body>
+    <?php include 'sidebar.php'; ?>
+    <main class="main-content">
+        <section class="welcome-section">
+            <h1>Faculty Counselling Calendar</h1>
+            <p class="text-muted">A calendar view of your accepted counselling sessions will appear here soon.</p>
+        </section>
+        <section class="card mt-6">
+            <div class="text-center text-muted" style="padding: 3rem 0; font-size: 1.2rem;">
+                <i class='bx bx-calendar' style="font-size:2rem;"></i><br>
+                Calendar feature coming soon!
+            </div>
+        </section>
+    </main>
 </body>
 </html> 

@@ -30,7 +30,6 @@ try {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="css/components.css">
@@ -51,17 +50,6 @@ try {
                     <p>Total Courses: <span class="font-semibold">0</span></p>
                     <p>Total Schedules: <span class="font-semibold">0</span></p>
                     <p>Total Users: <span class="font-semibold">0</span></p>
-                </div>
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-body">
-                <h2>All Exam Schedules</h2>
-                <div style="overflow-x:auto;">
-                    <table class="table" style="min-width:1000px;">
-                        <tr><th>Department</th><th>Course Code</th><th>Course Title</th><th>Section</th><th>Teacher</th><th>Exam Date</th><th>Exam Time</th><th>Room</th></tr>
-                        <!-- rows -->
-                    </table>
                 </div>
             </div>
         </div>

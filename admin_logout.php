@@ -11,4 +11,8 @@ session_destroy();
 // Redirect to admin login
 header('Location: admin_login.php');
 exit();
-?> 
+?>
+
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/layout.css">
+<link rel="stylesheet" href="css/components.css"> 

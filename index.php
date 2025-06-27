@@ -14,7 +14,7 @@
     <header class="landing-header">
         <nav class="landing-navbar">
             <div class="navbar-container">
-                <a href="#" class="navbar-brand"><span>CampusLynk</span></a>
+                <a href="#" class="navbar-brand smooth-white"><span>CampusLynk</span></a>
                 <div class="nav-links">
                     <a href="login.php" class="btn btn-outline btn-login">Login</a>
                     <a href="signup.php" class="btn btn-primary">Sign Up</a>
@@ -89,6 +89,9 @@
             </div>
         </div>
     </footer>
+    <div style="width:100%;text-align:center;margin:1.5rem 0 0 0;">
+        <a href="admin_login.php" style="color:#b0bedc;font-size:0.98rem;opacity:0.7;text-decoration:none;transition:color 0.2s;">Enter to mlobby</a>
+    </div>
     <script>
     // Enable mouse wheel horizontal scrolling for the features row
     const featuresGrid = document.querySelector('.features-grid');

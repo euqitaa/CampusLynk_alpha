@@ -102,11 +102,11 @@
     color: var(--foreground);
 }
 
-/* Icon Background Colors */
-.purple { background: hsl(270, 95%, 75%); }
-.yellow { background: hsl(45, 95%, 75%); }
-.pink { background: hsl(330, 95%, 75%); }
-.blue { background: hsl(210, 95%, 75%); }
+/* Icon Background Colors - Clean shadcn/ui style */
+.purple { background: transparent; }
+.yellow { background: transparent; }
+.pink { background: transparent; }
+.blue { background: transparent; }
 
 .content-stack {
     display: flex;
@@ -287,7 +287,7 @@
     justify-content: center;
     width: 2.7rem;
     height: 2.7rem;
-    background: var(--muted);
+    background: transparent;
     border-radius: 0.75rem;
 }
 .overview-title {

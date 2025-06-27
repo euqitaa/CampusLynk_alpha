@@ -1,4 +1,5 @@
 <?php
+// No CSS needed: this is a backend import script.
 require_once 'config/database.php';
 require 'vendor/autoload.php'; // You'll need to install smalot/pdfparser via composer
 
