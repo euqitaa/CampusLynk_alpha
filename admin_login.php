@@ -18,6 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['admin_email'] = $admin['email'];
             $_SESSION['useremail'] = $admin['email'];
             $_SESSION['admin_id'] = $admin['id'];
+            $_SESSION['role'] = 'admin';
             header('Location: admin_dashboard.php');
             exit();
         } else {
@@ -52,7 +53,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 Back to Home
             </a>
             <div class="auth-brand">
-                <span class="text-4xl">🎓</span>
                 <h1 class="text-3xl font-bold">CampusLynk</h1>
             </div>
             <div class="auth-message">

@@ -62,30 +62,47 @@ body {
 
 /* Left Box - Branding and Message */
 .auth-left {
-    background: linear-gradient(135deg, var(--primary) 0%, #004999 100%);
-    color: white;
-    padding: 3rem;
+    background:
+        radial-gradient(ellipse 80% 60% at 20% 20%, #3a5ba0 0%, transparent 70%),
+        radial-gradient(ellipse 60% 40% at 80% 30%, #1e2a47 0%, transparent 80%),
+        radial-gradient(ellipse 60% 40% at 60% 80%, #223a6d 0%, transparent 80%),
+        linear-gradient(120deg, #101624 0%, #1a2233 100%);
+    color: #eaf1fb;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 0 3rem;
     position: relative;
     overflow: hidden;
 }
 
-.back-home {
+.auth-left-content {
+    width: 100%;
+    max-width: 360px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex: 1 0 auto;
+    padding-top: 3.5rem;
+    box-sizing: border-box;
+}
+
+.auth-left-content .back-home {
+    margin-top: auto;
+    margin-bottom: 2.5rem;
+    color: #eaf1fb;
+    opacity: 0.9;
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: none;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    color: white;
-    text-decoration: none;
-    font-size: 0.875rem;
-    font-weight: 500;
-    opacity: 0.9;
-    transition: all 0.2s;
-    align-self: flex-start;
+    transition: opacity 0.2s, transform 0.2s;
 }
-
-.back-home:hover {
+.auth-left-content .back-home:hover {
     opacity: 1;
     transform: translateX(-2px);
 }
@@ -298,5 +315,60 @@ body {
 
     .auth-right {
         padding: 2rem;
+    }
+}
+
+@media (max-width: 900px) {
+    .auth-left {
+        display: none;
+    }
+}
+
+.btn-glassy {
+    background: rgba(24, 34, 51, 0.35);
+    color: #eaf1fb !important;
+    border: 1.5px solid rgba(255,255,255,0.18);
+    box-shadow: 0 4px 24px 0 rgba(0,124,240,0.10), 0 1.5px 4px 0 rgba(0,0,0,0.04), 0 1.5px 0px 0 #fff1 inset;
+    backdrop-filter: blur(12px);
+    font-weight: 600;
+    transition: background 0.25s, color 0.18s, box-shadow 0.25s, transform 0.18s;
+}
+.btn-glassy:hover {
+    background: rgba(24, 34, 51, 0.55);
+    color: #fff !important;
+    box-shadow: 0 8px 32px 0 rgba(0,198,251,0.16), 0 1.5px 4px 0 rgba(0,0,0,0.04);
+    transform: translateY(-2px) scale(1.03);
+}
+
+.btn-glassy-blue {
+    background: linear-gradient(135deg, rgba(0,124,240,0.85) 0%, rgba(0,198,251,0.75) 100%);
+    color: #fff !important;
+    border: 1.5px solid rgba(0,124,240,0.18);
+    box-shadow: 0 4px 24px 0 rgba(0,124,240,0.13), 0 1.5px 4px 0 rgba(0,0,0,0.04);
+    backdrop-filter: blur(8px);
+    font-weight: 600;
+    transition: background 0.25s, color 0.18s, box-shadow 0.25s, transform 0.18s;
+}
+.btn-glassy-blue:hover {
+    background: linear-gradient(135deg, rgba(0,198,251,0.95) 0%, rgba(0,124,240,0.95) 100%);
+    color: #fff !important;
+    box-shadow: 0 8px 32px 0 rgba(0,198,251,0.18), 0 1.5px 4px 0 rgba(0,0,0,0.04);
+    transform: translateY(-2px) scale(1.03);
+}
+
+.auth-left-content {
+    width: 100%;
+    max-width: 360px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex: 1 0 auto;
+    box-sizing: border-box;
+}
+
+@media (max-width: 900px) {
+    .auth-left {
+        display: none;
     }
 } 

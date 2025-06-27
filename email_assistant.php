@@ -110,7 +110,7 @@ if ($user && $user['role'] === 'student') {
                 $apiKey = $secrets['GROQ_API_KEY'];
 
                 // Construct a detailed prompt for the AI.
-                $prompt_for_ai = "Generate a professional email subject and body based on the following details, keep the details on bottom of the email.\n\n" .
+                $prompt_for_ai = "Generate a professional email subject and body based on the following details\n\n" .
                                "Student Name: " . ($user['name'] ?? 'N/A') . "\n" .
                                "Student ID: " . ($university_id ?? 'N/A') . "\n" .
                                "Course: " . ($selected_course ?: 'N/A') . "\n" .

@@ -43,7 +43,7 @@ $role = $sidebar_user['role'];
                 <i class='bx bxs-user-circle'></i>
             </div>
             <div class="user-details">
-                <h3 class="user-name"><?php echo htmlspecialchars($sidebar_user['name']); ?></h3>
+                <h3 class="user-name"><?php echo '@' . htmlspecialchars($sidebar_user['username']); ?></h3>
                 <p class="user-email"><?php echo htmlspecialchars($sidebar_user['email']); ?></p>
             </div>
         </a>
@@ -79,6 +79,12 @@ $role = $sidebar_user['role'];
                     <a href="admin_users.php" class="nav-link <?php echo $current_page === 'admin_users.php' ? 'active' : ''; ?>">
                         <i class='bx bxs-user-detail'></i>
                         <span>User Management</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="admin_event_management.php" class="nav-link <?php echo $current_page === 'admin_event_management.php' ? 'active' : ''; ?>">
+                        <i class='bx bx-calendar-plus'></i>
+                        <span>Event Management</span>
                     </a>
                 </li>
                 <li>

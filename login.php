@@ -49,23 +49,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="auth.css">
+    <link rel="stylesheet" href="css/auth.css">
 </head>
 <body class="auth-page">
     <div class="auth-container">
         <!-- Left Box - Branding and Message -->
         <div class="auth-left">
-            <a href="index.php" class="back-home">
-                <i class='bx bx-arrow-back'></i>
-                Back to Home
-            </a>
-            <div class="auth-brand">
-                <span class="text-4xl">🎓</span>
-                <h1 class="text-3xl font-bold">CampusLynk</h1>
-            </div>
-            <div class="auth-message">
-                <h2 class="text-2xl font-semibold mb-4">Welcome Back!</h2>
-                <p class="text-lg text-muted">Sign in to access your personalized student dashboard and stay connected with your academic journey.</p>
+                <a href="index.php" class="back-home" style="margin-top: auto;">
+                    <i class='bx bx-arrow-back'></i>
+                    Back to Home
+                </a>
+            <div class="auth-left-content" style="display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; height: 100vh; max-width: 360px; margin: 0 auto; padding-top: 3.5rem;">
+            <a href="index.php" class="back-home" style="margin-top: auto;">
+                    <i class='bx bx-arrow-back'></i>
+                    Back to Home
+                </a>
+                <h1 class="text-4xl font-bold" style="margin-bottom: 1.2rem;">Sign In</h1>
+                <p class="text-lg text-muted" style="color: #eaf1fb; margin-bottom: 2.5rem;">Sign in to access your personalized student dashboard and stay connected with your academic journey.</p>
+                
             </div>
         </div>
 

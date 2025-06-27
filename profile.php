@@ -38,6 +38,15 @@ try {
         $coursesStmt = $db->prepare($coursesQuery);
         $coursesStmt->execute([$userId]);
         $enrolled_courses = $coursesStmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // After fetching $user, fetch university_id if student
+        $university_id = null;
+        if ($user && isset($user['role']) && $user['role'] === 'student') {
+            $stmt = $db->prepare("SELECT university_id FROM student_id_table WHERE user_id = ?");
+            $stmt->execute([$user['id']]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($row) $university_id = $row['university_id'];
+        }
     } else {
         // Handle user not found
         session_destroy();
@@ -74,10 +83,15 @@ try {
                 <i class='bx bxs-user'></i>
             </div>
             <div class="profile-info">
-                <h1><?php echo isset($user['name']) ? htmlspecialchars($user['name']) : 'User'; ?></h1>
+                <h1><?php echo isset($user['username']) ? '@' . htmlspecialchars($user['username']) : 'User'; ?></h1>
                 <p class="text-muted"><?php echo isset($user['email']) ? htmlspecialchars($user['email']) : 'No email provided'; ?></p>
                 <?php if (isset($user['role'])): ?>
                     <span class="role-badge"><?php echo htmlspecialchars(ucfirst($user['role'])); ?></span>
+                <?php endif; ?>
+                <?php if ($university_id): ?>
+                    <div class="student-id" style="margin-top:0.5rem; color:#64748b; font-size:1rem;">
+                        <strong>ID:</strong> <?php echo htmlspecialchars($university_id); ?>
+                    </div>
                 <?php endif; ?>
             </div>
         </section>
@@ -94,6 +108,10 @@ try {
                 <div class="form-group">
                     <label for="name" class="form-label">Name</label>
                     <input type="text" name="name" id="name" class="form-input" value="<?php echo htmlspecialchars($user['name']); ?>" required>
+                </div>
+                <div class="form-group">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" name="username" id="username" class="form-input" value="<?php echo htmlspecialchars($user['username']); ?>" required>
                 </div>
                 <div class="form-group">
                     <label for="email" class="form-label">Email</label>

@@ -29,9 +29,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         // Prepare update data
         $name = $_POST['name'];
+        $username = $_POST['username'];
         $email = $_POST['email'];
-        $updates = ["name = ?", "email = ?"];
-        $params = [$name, $email];
+        $updates = ["name = ?", "username = ?", "email = ?"];
+        $params = [$name, $username, $email];
+        
+        // Check if username is changed and unique
+        if ($username !== $user['username']) {
+            $checkUsername = $db->prepare("SELECT COUNT(*) FROM users WHERE username = ? AND id != ?");
+            $checkUsername->execute([$username, $user['id']]);
+            if ($checkUsername->fetchColumn() > 0) {
+                throw new Exception("Username already exists");
+            }
+        }
         
         // Handle password update if provided
         if (!empty($_POST['new_password'])) {
@@ -50,6 +60,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Update session email if it was changed
         if ($email !== $_SESSION['useremail']) {
             $_SESSION['useremail'] = $email;
+        }
+        
+        // Update session username if it was changed
+        if ($username !== $_SESSION['username']) {
+            $_SESSION['username'] = $username;
         }
         
         header("Location: profile.php?success=Profile updated successfully");
