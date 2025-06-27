@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 26, 2025 at 05:51 PM
+-- Generation Time: Jun 26, 2025 at 10:06 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -60,6 +60,21 @@ CREATE TABLE `counselling_times` (
   `start_time` time NOT NULL,
   `end_time` time NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `counselling_times`
+--
+
+INSERT INTO `counselling_times` (`id`, `faculty_id`, `day_of_week`, `start_time`, `end_time`) VALUES
+(26, 84, 'Saturday', '08:30:00', '09:50:00'),
+(27, 84, 'Saturday', '09:51:00', '11:10:00'),
+(28, 84, 'Sunday', '12:31:00', '13:50:00'),
+(29, 84, 'Monday', '12:31:00', '13:50:00'),
+(30, 84, 'Monday', '13:51:00', '15:10:00'),
+(31, 84, 'Tuesday', '11:11:00', '12:30:00'),
+(32, 84, 'Tuesday', '12:31:00', '13:50:00'),
+(33, 84, 'Tuesday', '13:51:00', '15:10:00'),
+(34, 84, 'Wednesday', '11:11:00', '12:30:00');
 
 -- --------------------------------------------------------
 
@@ -1346,7 +1361,8 @@ INSERT INTO `faculty` (`id`, `name`, `designation`, `email`) VALUES
 (80, 'Md. Muhaiminul Islam Nafi', 'Lecturer', 'muhaiminul@cse.uiu.ac.bd'),
 (81, 'Imran Hossain', 'Lecturer', 'imran@cse.uiu.ac.bd'),
 (82, 'Fairoz Anika', 'Lecturer', 'fairoz@cse.uiu.ac.bd'),
-(83, 'Didarul Islam Didar', 'Lecturer', 'didarul@cse.uiu.ac.bd');
+(83, 'Didarul Islam Didar', 'Lecturer', 'didarul@cse.uiu.ac.bd'),
+(84, 'Ahmad Hasan', 'Professor', 'hasan@gmail.com');
 
 -- --------------------------------------------------------
 
@@ -1371,7 +1387,8 @@ INSERT INTO `student_enrollments` (`id`, `student_id`, `course_id`, `section`) V
 (56, 20, 3, 'AA'),
 (57, 20, 437, 'A'),
 (58, 21, 3, 'AA'),
-(59, 21, 441, 'E');
+(59, 21, 441, 'E'),
+(60, 21, 1, '');
 
 -- --------------------------------------------------------
 
@@ -1419,7 +1436,7 @@ CREATE TABLE `upcoming_courses` (
 --
 
 INSERT INTO `upcoming_courses` (`id`, `program`, `course_code`, `course_title`, `section`, `room1`, `room2`, `day1`, `day2`, `time1`, `time2`, `faculty_name`, `faculty_initial`, `credit`) VALUES
-(1, 'BSCSE', 'ACT 2111', 'Financial and Managerial Accounting', 'A', '401', '401', 'Sat', 'Tue', '08:30:AM - 09:50:AM', '08:30:AM - 09:50:AM', 'Ishrat Jahan', 'IJ', 3.0),
+(1, 'BSCSE', 'ACT 2111', 'Financial and Managerial Accounting', 'A', '401', '401', 'Sat', 'Tue', '08:30:AM - 09:50:AM', '08:30:AM - 09:50:AM', 'Ahmad Hasan', 'IJ', 3.0),
 (2, 'BSCSE', 'ACT 2111', 'Financial and Managerial Accounting', 'B', '401', '401', 'Sat', 'Tue', '12:31:PM - 01:50:PM', '12:31:PM - 01:50:PM', 'Ishrat Jahan', 'IJ', 3.0),
 (3, 'BSCSE', 'BDS 1201', 'History of the Emergence of Bangladesh', 'AA', '401', '401', 'Sat', 'Tue', '09:51:AM - 11:10:AM', '09:51:AM - 11:10:AM', 'Farzana Akter Mim', 'FaAM', 2.0),
 (4, 'BSCSE', 'BDS 1201', 'History of the Emergence of Bangladesh', 'AB', '401', '401', 'Sun', 'Wed', '09:51:AM - 11:10:AM', '09:51:AM - 11:10:AM', 'Mallika Datta', 'MD', 2.0),
@@ -2104,7 +2121,8 @@ INSERT INTO `users` (`id`, `username`, `email`, `password`, `role`, `name`) VALU
 (17, 'ibnemasud', 'ibnemasud@cse.uiu.ac.bd', '$2y$10$3lPTlvprSRePxSMq5Uerle.fmbjOcfycR2jWjVyZPwmsUyHcEZg0u', 'faculty', 'Ibne Masud'),
 (19, 'imrthedragon', 'iriyadh221521@bscse.uiu.ac.bd', '$2y$10$BGCQko1O7pLl.fvow1xkqeq/IkzvDMPK45UaOXmW8.qln/ybiI.de', 'student', 'Ilham Mahfuz Riyadh'),
 (20, 'hasnat', 'ahasnat221436@bscse.uiu.ac.bd', '$2y$10$9.bjKN7uftfyPQ.7zdGA6.Ddoht7Y9vHI6SEaokww4pRsHQiCunhu', 'student', 'Abu Hasnat'),
-(21, 'emad', 'emad200105@gmail.com', '$2y$10$FtgmRa0OPjcOticyJt1JzunDFhFnr8rNU8M7/gAVa6mv.ivbbP1aq', 'student', 'Hasnat Emad');
+(21, 'emad', 'emad200105@gmail.com', '$2y$10$FtgmRa0OPjcOticyJt1JzunDFhFnr8rNU8M7/gAVa6mv.ivbbP1aq', 'student', 'Hasnat Emad'),
+(24, 'Hasan', 'hasan@gmail.com', '$2y$10$tx8H3UCM1IGQ5l59KodlAOiCPQYkx9FX14bzt9EN.UiTJI6i4Z66G', 'faculty', 'Ahmad Hasan');
 
 --
 -- Indexes for dumped tables
@@ -2189,13 +2207,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `counselling_requests`
 --
 ALTER TABLE `counselling_requests`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `counselling_times`
 --
 ALTER TABLE `counselling_times`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT for table `course_schedules`
@@ -2225,13 +2243,13 @@ ALTER TABLE `exam_schedules`
 -- AUTO_INCREMENT for table `faculty`
 --
 ALTER TABLE `faculty`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=84;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=85;
 
 --
 -- AUTO_INCREMENT for table `student_enrollments`
 --
 ALTER TABLE `student_enrollments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 
 --
 -- AUTO_INCREMENT for table `upcoming_courses`
@@ -2243,7 +2261,7 @@ ALTER TABLE `upcoming_courses`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- Constraints for dumped tables

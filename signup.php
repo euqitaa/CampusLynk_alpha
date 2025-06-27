@@ -10,6 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
     $role = $_POST['role'] ?? 'student';
     $university_id = $_POST['university_id'] ?? null;
+    $designation = $_POST['designation'] ?? null;
     $password = $_POST['password'] ?? '';
     $password2 = $_POST['password2'] ?? '';
 
@@ -21,23 +22,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Password must be at least 8 characters long.';
     } elseif ($role === 'student' && (empty($university_id) || !preg_match('/^0[0-9]{8,}$/', $university_id))) {
         $error = 'A valid University ID is required for students.';
+    } elseif ($role === 'faculty' && empty($designation)) {
+        $error = 'Designation is required for faculty.';
     } else {
         try {
             $db = (new Database())->getConnection();
+            $db->beginTransaction();
+
             // Check if email or username already exists
             $stmt = $db->prepare("SELECT COUNT(*) FROM users WHERE email = ? OR username = ?");
             $stmt->execute([$email, $username]);
             if ($stmt->fetchColumn() > 0) {
                 $error = 'Email or username already exists.';
+                $db->rollBack();
             } else {
                 $hash = password_hash($password, PASSWORD_DEFAULT);
                 $stmt = $db->prepare("INSERT INTO users (name, username, email, password, role) VALUES (?, ?, ?, ?, ?)");
                 $stmt->execute([$name, $username, $email, $hash, $role]);
-                // Optionally, store university_id in a separate table if needed
+                
+                if ($role === 'faculty') {
+                    $stmt = $db->prepare("INSERT INTO faculty (name, designation, email) VALUES (?, ?, ?)");
+                    $stmt->execute([$name, $designation, $email]);
+                } else {
+                    $user_id = $db->lastInsertId();
+                    $stmt_student = $db->prepare("INSERT INTO student_id_table (user_id, university_id) VALUES (?, ?)");
+                    $stmt_student->execute([$user_id, $university_id]);
+                }
+
+                $db->commit();
                 header('Location: login.php?success=Account created successfully! Please sign in.');
                 exit();
             }
         } catch (PDOException $e) {
+            if ($db->inTransaction()) {
+                $db->rollBack();
+            }
             $error = 'Database error: ' . $e->getMessage();
         }
     }
@@ -108,17 +127,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <label class="form-label">Role</label>
                         <div class="input-with-icon">
                             <i class='bx bx-user-pin'></i>
-                            <select name="role" id="role" class="form-input" required onchange="toggleStudentIdField()">
+                            <select name="role" id="role" class="form-input" required onchange="toggleFields()">
                                 <option value="student">Student</option>
                                 <option value="faculty">Faculty</option>
                             </select>
                         </div>
                     </div>
-                    <div class="form-group" id="student-id-group" style="display:none;">
+                    <div class="form-group" id="student-id-group">
                         <label class="form-label">University ID</label>
                         <div class="input-with-icon">
                             <i class='bx bx-id-card'></i>
                             <input type="text" name="university_id" id="university_id" class="form-input" pattern="0[0-9]{8,}" maxlength="20" placeholder="e.g. 011221521">
+                        </div>
+                    </div>
+                    <div class="form-group" id="designation-group" style="display:none;">
+                        <label class="form-label">Designation</label>
+                        <div class="input-with-icon">
+                            <i class='bx bx-briefcase'></i>
+                            <select name="designation" id="designation" class="form-input">
+                                <option value="">Select Designation</option>
+                                <option value="Professor">Professor</option>
+                                <option value="Associate Professor">Associate Professor</option>
+                                <option value="Assistant Professor">Assistant Professor</option>
+                                <option value="Lecturer">Lecturer</option>
+                            </select>
                         </div>
                     </div>
                     
@@ -168,13 +200,27 @@ function togglePassword(inputId, btn) {
         icon.classList.add('bx-show');
     }
 }
-function toggleStudentIdField() {
+function toggleFields() {
     var role = document.getElementById('role').value;
-    var group = document.getElementById('student-id-group');
-    group.style.display = (role === 'student') ? 'block' : 'none';
+    var studentGroup = document.getElementById('student-id-group');
+    var designationGroup = document.getElementById('designation-group');
+    var universityIdInput = document.getElementById('university_id');
+    var designationInput = document.getElementById('designation');
+
+    if (role === 'student') {
+        studentGroup.style.display = 'block';
+        universityIdInput.required = true;
+        designationGroup.style.display = 'none';
+        designationInput.required = false;
+    } else if (role === 'faculty') {
+        studentGroup.style.display = 'none';
+        universityIdInput.required = false;
+        designationGroup.style.display = 'block';
+        designationInput.required = true;
+    }
 }
 document.addEventListener('DOMContentLoaded', function() {
-    toggleStudentIdField();
+    toggleFields();
 });
 </script>
 </html>

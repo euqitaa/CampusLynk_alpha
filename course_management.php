@@ -117,7 +117,7 @@ try {
                     <div class="form-group">
                         <label for="enroll_course_code" class="form-label">Course</label>
                         <select name="enroll_course_code" id="enroll_course_code" class="form-input" required>
-                            <option value="">-- Select a Course --</option>
+                            <option value=""> Select a Course </option>
                             <?php
                             $uniqueCourses = [];
                             foreach ($all_courses as $course) {
@@ -133,7 +133,7 @@ try {
                     <div class="form-group">
                         <label for="enroll_section" class="form-label">Section</label>
                         <select name="enroll_section" id="enroll_section" class="form-input" required disabled>
-                            <option value="">-- Select a Section --</option>
+                            <option value=""> Select a Section </option>
                         </select>
                     </div>
                     <input type="hidden" name="enroll_course_id" id="enroll_course_id_hidden">
