@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 26, 2025 at 10:06 PM
+-- Generation Time: Jun 28, 2025 at 10:34 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -45,7 +45,8 @@ INSERT INTO `counselling_requests` (`id`, `student_id`, `faculty_id`, `requested
 (3, 2, 2, 'Sunday 11:30:00-12:00:00', 'pending'),
 (4, 1, 2, 'Saturday 02:30:00-03:00:00', 'pending'),
 (5, 8, 2, 'Saturday 02:30:00-03:00:00', 'pending'),
-(6, 8, 2, 'Saturday 02:30:00-03:00:00', 'pending');
+(6, 8, 2, 'Saturday 02:30:00-03:00:00', 'pending'),
+(12, 19, 73, 'Wednesday 12:31:00-13:50:00', 'pending');
 
 -- --------------------------------------------------------
 
@@ -74,7 +75,17 @@ INSERT INTO `counselling_times` (`id`, `faculty_id`, `day_of_week`, `start_time`
 (31, 84, 'Tuesday', '11:11:00', '12:30:00'),
 (32, 84, 'Tuesday', '12:31:00', '13:50:00'),
 (33, 84, 'Tuesday', '13:51:00', '15:10:00'),
-(34, 84, 'Wednesday', '11:11:00', '12:30:00');
+(34, 84, 'Wednesday', '11:11:00', '12:30:00'),
+(35, 73, 'Saturday', '09:51:00', '11:10:00'),
+(36, 73, 'Saturday', '12:31:00', '13:50:00'),
+(37, 73, 'Saturday', '13:51:00', '15:10:00'),
+(38, 73, 'Sunday', '11:11:00', '12:30:00'),
+(39, 73, 'Sunday', '12:31:00', '13:50:00'),
+(40, 73, 'Tuesday', '09:51:00', '11:10:00'),
+(41, 73, 'Tuesday', '12:31:00', '13:50:00'),
+(42, 73, 'Tuesday', '13:51:00', '15:10:00'),
+(43, 73, 'Wednesday', '09:51:00', '11:10:00'),
+(44, 73, 'Wednesday', '12:31:00', '13:50:00');
 
 -- --------------------------------------------------------
 
@@ -1281,7 +1292,6 @@ CREATE TABLE `faculty` (
 --
 
 INSERT INTO `faculty` (`id`, `name`, `designation`, `email`) VALUES
-(3, 'Dr. Md. Abul Kashem Mia', 'Vice Chancellor', 'kashem@uiu.ac.bd'),
 (4, 'Dr. Hasan Sarwar', 'Professor', 'hsarwar@cse.uiu.ac.bd'),
 (5, 'Dr. Mohammad Nurul Huda', 'Professor', 'mnh@cse.uiu.ac.bd'),
 (6, 'Dr. Khondaker Abdullah -Al-Mamun', 'Professor', 'mamun@cse.uiu.ac.bd'),
@@ -1367,6 +1377,22 @@ INSERT INTO `faculty` (`id`, `name`, `designation`, `email`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `pending_materials`
+--
+
+CREATE TABLE `pending_materials` (
+  `id` int(11) NOT NULL,
+  `course_code` varchar(64) NOT NULL,
+  `filename` varchar(255) NOT NULL,
+  `uploader_email` varchar(255) NOT NULL,
+  `uploaded_at` datetime NOT NULL,
+  `status` enum('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+  `original_path` varchar(512) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `student_enrollments`
 --
 
@@ -1388,7 +1414,8 @@ INSERT INTO `student_enrollments` (`id`, `student_id`, `course_id`, `section`) V
 (57, 20, 437, 'A'),
 (58, 21, 3, 'AA'),
 (59, 21, 441, 'E'),
-(60, 21, 1, '');
+(60, 21, 1, ''),
+(61, 25, 437, '');
 
 -- --------------------------------------------------------
 
@@ -1406,7 +1433,8 @@ CREATE TABLE `student_id_table` (
 --
 
 INSERT INTO `student_id_table` (`user_id`, `university_id`) VALUES
-(19, '011221521');
+(19, '011221521'),
+(25, '011221544');
 
 -- --------------------------------------------------------
 
@@ -2122,7 +2150,8 @@ INSERT INTO `users` (`id`, `username`, `email`, `password`, `role`, `name`) VALU
 (19, 'imrthedragon', 'iriyadh221521@bscse.uiu.ac.bd', '$2y$10$BGCQko1O7pLl.fvow1xkqeq/IkzvDMPK45UaOXmW8.qln/ybiI.de', 'student', 'Ilham Mahfuz Riyadh'),
 (20, 'hasnat', 'ahasnat221436@bscse.uiu.ac.bd', '$2y$10$9.bjKN7uftfyPQ.7zdGA6.Ddoht7Y9vHI6SEaokww4pRsHQiCunhu', 'student', 'Abu Hasnat'),
 (21, 'emad', 'emad200105@gmail.com', '$2y$10$FtgmRa0OPjcOticyJt1JzunDFhFnr8rNU8M7/gAVa6mv.ivbbP1aq', 'student', 'Hasnat Emad'),
-(24, 'Hasan', 'hasan@gmail.com', '$2y$10$tx8H3UCM1IGQ5l59KodlAOiCPQYkx9FX14bzt9EN.UiTJI6i4Z66G', 'faculty', 'Ahmad Hasan');
+(24, 'Hasan', 'hasan@gmail.com', '$2y$10$tx8H3UCM1IGQ5l59KodlAOiCPQYkx9FX14bzt9EN.UiTJI6i4Z66G', 'faculty', 'Ahmad Hasan'),
+(25, 'nafisnawal', 'nnawal221544@bscse.uiu.ac.bd', '$2y$10$bOgC5hxI7IRFuFLNL5zIAO/7fdBLAx7rLPNHzAf.Ra/ACtJFrh.a2', 'student', 'Nafis Nawal');
 
 --
 -- Indexes for dumped tables
@@ -2172,6 +2201,12 @@ ALTER TABLE `faculty`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `pending_materials`
+--
+ALTER TABLE `pending_materials`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `student_enrollments`
 --
 ALTER TABLE `student_enrollments`
@@ -2207,13 +2242,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `counselling_requests`
 --
 ALTER TABLE `counselling_requests`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `counselling_times`
 --
 ALTER TABLE `counselling_times`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
 -- AUTO_INCREMENT for table `course_schedules`
@@ -2246,10 +2281,16 @@ ALTER TABLE `faculty`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=85;
 
 --
+-- AUTO_INCREMENT for table `pending_materials`
+--
+ALTER TABLE `pending_materials`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT for table `student_enrollments`
 --
 ALTER TABLE `student_enrollments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
 
 --
 -- AUTO_INCREMENT for table `upcoming_courses`
@@ -2261,7 +2302,7 @@ ALTER TABLE `upcoming_courses`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- Constraints for dumped tables

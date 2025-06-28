@@ -37,7 +37,7 @@ $role = $sidebar_user['role'];
     <div class="sidebar-header">
         <div class="logo-and-title-div">
             <div class="sidebar-brand">
-                <a href="dashboard.php" class="navbar-brand sidebar-logo"><span>CampusLynk</span></a>
+                <a href="index.php" class="navbar-brand sidebar-logo"><span>CampusLynk</span></a>
             </div>
         </div>
         <a href="<?php echo $role === 'faculty' ? 'faculty_dashboard.php' : ($role === 'admin' ? 'admin_dashboard.php' : 'profile.php'); ?>" class="user-info">
@@ -62,7 +62,7 @@ $role = $sidebar_user['role'];
                 <li>
                     <a href="admin_dataimport.php" class="nav-link <?php echo $current_page === 'admin_dataimport.php' ? 'active' : ''; ?>">
                         <i class='bx bxs-file-import'></i>
-                        <span>Data Import</span>
+                        <span>Upcoming Class Import</span>
                     </a>
                 </li>
                 <li>
@@ -87,6 +87,13 @@ $role = $sidebar_user['role'];
                     <a href="admin_event_management.php" class="nav-link <?php echo $current_page === 'admin_event_management.php' ? 'active' : ''; ?>">
                         <i class='bx bx-calendar-plus'></i>
                         <span>Event Management</span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="admin_review_materials.php" class="nav-link <?php echo $current_page === 'admin_review_materials.php' ? 'active' : ''; ?>">
+                        <i class='bx bx-task'></i>
+                        <span>Review Materials</span>
                     </a>
                 </li>
                 <li>

@@ -1,3 +1,24 @@
+<?php
+session_start();
+require_once 'config/database.php';
+$user = null;
+$profile_link = 'profile.php';
+if (isset($_SESSION['useremail']) && !empty($_SESSION['useremail'])) {
+    $db = (new Database())->getConnection();
+    $stmt = $db->prepare("SELECT username, name, role FROM users WHERE email = ?");
+    $stmt->execute([$_SESSION['useremail']]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($user) {
+        if ($user['role'] === 'admin') {
+            $profile_link = 'admin_dashboard.php';
+        } elseif ($user['role'] === 'faculty') {
+            $profile_link = 'faculty_dashboard.php';
+        } else {
+            $profile_link = 'dashboard.php';
+        }
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,6 +51,41 @@
             opacity: 0;
             pointer-events: none;
         }
+        .profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            background: var(--background, #fff);
+            border-radius: 2rem;
+            padding: 0.35rem 1.1rem 0.35rem 0.5rem;
+            box-shadow: 0 1.5px 6px 0 rgba(0,124,240,0.07);
+            border: 1px solid #e2e8f0;
+            color: #223a6d;
+            font-weight: 500;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: background 0.18s, box-shadow 0.18s;
+        }
+        .profile-btn:hover {
+            background: #f1f5f9;
+            box-shadow: 0 4px 16px 0 rgba(0,124,240,0.10);
+        }
+        .profile-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #0066cc;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+        .profile-username {
+            font-weight: 600;
+            font-size: 1rem;
+            color: #223a6d;
+        }
     </style>
 </head>
 <body>
@@ -39,10 +95,17 @@
     <header class="landing-header">
         <nav class="landing-navbar">
             <div class="navbar-container">
-                <a href="#" class="navbar-brand smooth-white"><span>CampusLynk</span></a>
+                <a href="index.php" class="navbar-brand smooth-white"><span>CampusLynk</span></a>
                 <div class="nav-links">
-                    <a href="login.php" class="btn btn-outline btn-login">Login</a>
-                    <a href="signup.php" class="btn btn-primary">Sign Up</a>
+                    <?php if ($user): ?>
+                        <a href="<?php echo $profile_link; ?>" class="profile-btn">
+                            <span class="profile-avatar"><i class='bx bxs-user'></i></span>
+                            <span class="profile-username"><?php echo htmlspecialchars($user['username']); ?></span>
+                        </a>
+                    <?php else: ?>
+                        <a href="login.php" class="btn btn-outline btn-login">Login</a>
+                        <a href="signup.php" class="btn btn-primary">Sign Up</a>
+                    <?php endif; ?>
                 </div>
             </div>
         </nav>
