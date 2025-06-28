@@ -53,6 +53,7 @@ try {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/layout.css">
@@ -61,33 +62,34 @@ try {
 </head>
 
 <body>
-    <?php include 'sidebar.php'; ?>
+<div class="dashboard-layout">
+  <?php include 'sidebar.php'; ?>
+  <main id="main-content" class="main-content fade-transition fade-out" style="">
+    <section class="welcome-section">
+        <h1>Study Materials</h1>
+        <p class="text-muted">Access your course materials and resources</p>
+    </section>
 
-    <main class="main-content">
-        <section class="welcome-section">
-            <h1>Study Materials</h1>
-            <p class="text-muted">Access your course materials and resources</p>
-        </section>
-
-        <div class="course-grid">
-            <?php if (empty($courses)): ?>
-                <div class="empty-state-container">
-                    <p>You are not enrolled in any courses yet. Please enroll in a course to see its materials.</p>
-                </div>
-            <?php else: ?>
-                <?php foreach ($courses as $course): ?>
-                <div class="course-card">
-                    <h3 class="course-title"><?php echo htmlspecialchars($course['course_title']); ?></h3>
-                    <p class="course-description"><?php echo htmlspecialchars($course['course_code']); ?></p>
-                    <a href="course_materials.php?course_code=<?php echo urlencode($course['course_code']); ?>" class="btn-view-materials">
-                        <i class='bx bx-book-open'></i>
-                        <span>View Materials</span>
-                    </a>
-                </div>
-                <?php endforeach; ?>
-            <?php endif; ?>
-        </div>
-    </main>
+    <div class="course-grid">
+        <?php if (empty($courses)): ?>
+            <div class="empty-state-container">
+                <p>You are not enrolled in any courses yet. Please enroll in a course to see its materials.</p>
+            </div>
+        <?php else: ?>
+            <?php foreach ($courses as $course): ?>
+            <div class="course-card">
+                <h3 class="course-title"><?php echo htmlspecialchars($course['course_title']); ?></h3>
+                <p class="course-description"><?php echo htmlspecialchars($course['course_code']); ?></p>
+                <a href="course_materials.php?course_code=<?php echo urlencode($course['course_code']); ?>" class="btn-view-materials">
+                    <i class='bx bx-book-open'></i>
+                    <span>View Materials</span>
+                </a>
+            </div>
+            <?php endforeach; ?>
+        <?php endif; ?>
+    </div>
+  </main>
+</div>
 </body>
 
 </html>

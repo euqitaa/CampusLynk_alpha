@@ -87,6 +87,7 @@ try {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/layout.css">
@@ -95,56 +96,57 @@ try {
 </head>
 
 <body>
-    <?php include 'sidebar.php'; ?>
+<div class="dashboard-layout">
+  <?php include 'sidebar.php'; ?>
+  <main id="main-content" class="main-content fade-transition fade-out" style="">
+    <section class="welcome-section">
+        <h1>Class Routine</h1>
+        <p class="text-muted">Your personalized class schedule for the week</p>
+    </section>
 
-    <main class="main-content">
-        <section class="welcome-section">
-            <h1>Class Routine</h1>
-            <p class="text-muted">Your personalized class schedule for the week</p>
-        </section>
-
-        <div class="table-container">
-            <table class="table">
-                <thead>
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <?php foreach ($days as $day): ?>
+                        <th><?php echo htmlspecialchars($day); ?></th>
+                    <?php endforeach; ?>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (empty($timeSlots)): ?>
                     <tr>
-                        <th>Time</th>
-                        <?php foreach ($days as $day): ?>
-                            <th><?php echo htmlspecialchars($day); ?></th>
-                        <?php endforeach; ?>
+                        <td colspan="<?php echo count($days) + 1; ?>" style="text-align: center;">You are not enrolled in any courses.</td>
                     </tr>
-                </thead>
-                <tbody>
-                    <?php if (empty($timeSlots)): ?>
+                <?php else: ?>
+                    <?php foreach ($timeSlots as $time): ?>
                         <tr>
-                            <td colspan="<?php echo count($days) + 1; ?>" style="text-align: center;">You are not enrolled in any courses.</td>
+                            <td><?php echo htmlspecialchars($time); ?></td>
+                            <?php foreach ($days as $day): ?>
+                                <td>
+                                    <?php if (isset($schedule[$time][$day])): 
+                                        $class = $schedule[$time][$day];
+                                    ?>
+                                        <div class="class-cell">
+                                            <span class="class-name"><?php echo htmlspecialchars($class['course_title']); ?></span>
+                                            <span class="class-info"><?php echo htmlspecialchars($class['course_code']); ?> [<?php echo htmlspecialchars($class['section']); ?>]</span>
+                                            <span class="class-details">Room: <?php echo htmlspecialchars($class['room']); ?></span>
+                                            <span class="class-details">Faculty: <?php echo htmlspecialchars($class['faculty_name']); ?></span>
+                                        </div>
+                                    <?php else: ?>
+                                        <div class="empty-cell"></div>
+                                    <?php endif; ?>
+                                </td>
+                            <?php endforeach; ?>
                         </tr>
-                    <?php else: ?>
-                        <?php foreach ($timeSlots as $time): ?>
-                            <tr>
-                                <td><?php echo htmlspecialchars($time); ?></td>
-                                <?php foreach ($days as $day): ?>
-                                    <td>
-                                        <?php if (isset($schedule[$time][$day])): 
-                                            $class = $schedule[$time][$day];
-                                        ?>
-                                            <div class="class-cell">
-                                                <span class="class-name"><?php echo htmlspecialchars($class['course_title']); ?></span>
-                                                <span class="class-info"><?php echo htmlspecialchars($class['course_code']); ?> [<?php echo htmlspecialchars($class['section']); ?>]</span>
-                                                <span class="class-details">Room: <?php echo htmlspecialchars($class['room']); ?></span>
-                                                <span class="class-details">Faculty: <?php echo htmlspecialchars($class['faculty_name']); ?></span>
-                                            </div>
-                                        <?php else: ?>
-                                            <div class="empty-cell"></div>
-                                        <?php endif; ?>
-                                    </td>
-                                <?php endforeach; ?>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
-    </main>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+  </main>
+</div>
 </body>
 
 </html>

@@ -339,4 +339,23 @@
     background: #eaf1fb;
     transition: background 0.18s;
     box-shadow: 0 2px 12px 0 rgba(0,198,251,0.10);
+}
+
+/* Main content fade transition */
+.fade-transition {
+  opacity: 0;
+  transition: opacity 0.35s cubic-bezier(.4,0,.2,1);
+}
+.fade-transition.fade-in {
+  opacity: 1;
+}
+.fade-transition.fade-out {
+  opacity: 0;
+}
+
+/* Sidebar button fade/highlight */
+.nav-link.sidebar-fade {
+  background: rgba(0, 108, 255, 0.08) !important;
+  color: #0056b3 !important;
+  transition: background 0.25s, color 0.25s;
 } 

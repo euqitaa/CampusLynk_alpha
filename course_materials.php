@@ -48,6 +48,7 @@ if (is_dir($materials_path)) {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/layout.css">
@@ -55,35 +56,36 @@ if (is_dir($materials_path)) {
     <link rel="stylesheet" href="css/materials-list.css">
 </head>
 <body>
-    <?php include 'sidebar.php'; ?>
+<div class="dashboard-layout">
+  <?php include 'sidebar.php'; ?>
+  <main id="main-content" class="fade-transition fade-out" style="">
+    <section class="page-header">
+        <a href="study-materials.php" class="back-link"><i class='bx bx-arrow-back'></i> Back to Courses</a>
+        <h1><?php echo $course_title; ?></h1>
+        <p class="text-muted">Available study materials for this course</p>
+    </section>
 
-    <main class="main-content">
-        <section class="page-header">
-            <a href="study-materials.php" class="back-link"><i class='bx bx-arrow-back'></i> Back to Courses</a>
-            <h1><?php echo $course_title; ?></h1>
-            <p class="text-muted">Available study materials for this course</p>
-        </section>
-
-        <div class="materials-container">
-            <?php if (empty($files)): ?>
-                <div class="empty-state">
-                    <i class='bx bx-file-blank'></i>
-                    <p>No study materials have been uploaded for this course yet.</p>
-                </div>
-            <?php else: ?>
-                <ul class="materials-list">
-                    <?php foreach ($files as $file): ?>
-                        <li>
-                            <a href="<?php echo htmlspecialchars($materials_path . '/' . $file); ?>" target="_blank" class="material-item">
-                                <i class='bx bxs-file-pdf'></i>
-                                <span><?php echo htmlspecialchars($file); ?></span>
-                                <i class='bx bx-link-external link-icon'></i>
-                            </a>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            <?php endif; ?>
-        </div>
-    </main>
+    <div class="materials-container">
+        <?php if (empty($files)): ?>
+            <div class="empty-state">
+                <i class='bx bx-file-blank'></i>
+                <p>No study materials have been uploaded for this course yet.</p>
+            </div>
+        <?php else: ?>
+            <ul class="materials-list">
+                <?php foreach ($files as $file): ?>
+                    <li>
+                        <a href="<?php echo htmlspecialchars($materials_path . '/' . $file); ?>" target="_blank" class="material-item">
+                            <i class='bx bxs-file-pdf'></i>
+                            <span><?php echo htmlspecialchars($file); ?></span>
+                            <i class='bx bx-link-external link-icon'></i>
+                        </a>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        <?php endif; ?>
+    </div>
+  </main>
+</div>
 </body>
 </html> 

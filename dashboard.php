@@ -147,6 +147,7 @@ if (isset($_SESSION['department']) && isset($_SESSION['section'])) {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/layout.css">
@@ -155,123 +156,124 @@ if (isset($_SESSION['department']) && isset($_SESSION['section'])) {
 </head>
 
 <body>
-    <?php include 'sidebar.php'; ?>
-
-    <main class="main-content">
-        <section class="welcome-section">
-            <h1>Welcome, <?php echo htmlspecialchars($user['name']); ?></h1>
-            <p class="text-muted">Access your student dashboard</p>
-            <?php if (isset($_GET['success'])): ?>
-                <div class="alert alert-success">
-                    <?php echo htmlspecialchars($_GET['success']); ?>
-                </div>
-            <?php endif; ?>
-            <?php if (isset($_GET['error'])): ?>
-                <div class="alert alert-danger">
-                    <?php echo htmlspecialchars($_GET['error']); ?>
-                </div>
-            <?php endif; ?>
-             <?php if (isset($_GET['message'])): ?>
-                <div class="alert alert-info">
-                    <?php echo htmlspecialchars($_GET['message']); ?>
-                </div>
-            <?php endif; ?>
-        </section>
-
-        <div class="quick-access-row">
-            <div class="quick-access-card glow-purple">
-                <div class="quick-access-card-content">
-                    <div class="quick-access-number"><?php echo $courseCount; ?></div>
-                    <div class="quick-access-label">Courses</div>
-                </div>
-                <div class="quick-access-icon purple">
-                    <i class='bx bxs-book'></i>
-                </div>
+<div class="dashboard-layout">
+  <?php include 'sidebar.php'; ?>
+  <main id="main-content" class="main-content fade-transition fade-out" style="">
+    <section class="welcome-section">
+        <h1>Welcome, <?php echo htmlspecialchars($user['name']); ?></h1>
+        <p class="text-muted">Access your student dashboard</p>
+        <?php if (isset($_GET['success'])): ?>
+            <div class="alert alert-success">
+                <?php echo htmlspecialchars($_GET['success']); ?>
             </div>
-
-            <div class="quick-access-card glow-yellow">
-                <div class="quick-access-card-content">
-                    <div class="quick-access-number"><?php echo $requestCount; ?></div>
-                    <div class="quick-access-label">Requests</div>
-                </div>
-                <div class="quick-access-icon yellow">
-                    <i class='bx bxs-user'></i>
-                </div>
+        <?php endif; ?>
+        <?php if (isset($_GET['error'])): ?>
+            <div class="alert alert-danger">
+                <?php echo htmlspecialchars($_GET['error']); ?>
             </div>
-
-            <div class="quick-access-card glow-pink">
-                <div class="quick-access-card-content">
-                    <div class="quick-access-number"><?php echo $materialCount; ?></div>
-                    <div class="quick-access-label">Materials</div>
-                </div>
-                <div class="quick-access-icon pink">
-                    <i class='bx bxs-file'></i>
-                </div>
+        <?php endif; ?>
+         <?php if (isset($_GET['message'])): ?>
+            <div class="alert alert-info">
+                <?php echo htmlspecialchars($_GET['message']); ?>
             </div>
+        <?php endif; ?>
+    </section>
 
-            <div class="quick-access-card glow-blue">
-                <div class="quick-access-card-content">
-                    <div class="quick-access-number"><?php echo $eventCount; ?></div>
-                    <div class="quick-access-label">Events</div>
-                </div>
-                <div class="quick-access-icon blue">
-                    <i class='bx bxs-calendar'></i>
-                </div>
+    <div class="quick-access-row">
+        <div class="quick-access-card glow-purple">
+            <div class="quick-access-card-content">
+                <div class="quick-access-number"><?php echo $courseCount; ?></div>
+                <div class="quick-access-label">Courses</div>
+            </div>
+            <div class="quick-access-icon purple">
+                <i class='bx bxs-book'></i>
             </div>
         </div>
 
-        <div class="content-stack">
-            <div class="card">
-                <h2 class="text-xl font-semibold mb-4">Overview</h2>
-                <div class="dashboard-overview-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
-                    <?php if ($nextEvent): ?>
-                    <div class="overview-card">
-                        <div class="overview-icon"><i class='bx bxs-calendar text-primary'></i></div>
-                        <div class="overview-content">
-                            <h3 class="overview-title">Upcoming Event</h3>
-                            <div class="overview-main"><?php echo htmlspecialchars($nextEvent['title']); ?></div>
-                            <div class="overview-desc"><?php echo htmlspecialchars($nextEvent['description']); ?></div>
-                            <div class="overview-date"><?php echo date('M d, Y', strtotime($nextEvent['date'])); ?></div>
-                        </div>
-                    </div>
-                    <?php endif; ?>
-                    <?php if ($nextExam): ?>
-                    <div class="overview-card">
-                        <div class="overview-icon"><i class='bx bxs-time-five text-primary'></i></div>
-                        <div class="overview-content">
-                            <h3 class="overview-title">Upcoming Exam</h3>
-                            <div class="overview-main"><?php echo htmlspecialchars($nextExam['course_title']); ?></div>
-                            <div class="overview-desc">Date: <?php echo date('M d, Y', strtotime($nextExam['exam_date'])); ?> | Time: <?php echo htmlspecialchars($nextExam['exam_time']); ?> | Room: <?php echo htmlspecialchars($nextExam['room']); ?></div>
-                        </div>
-                    </div>
-                    <?php endif; ?>
-                    <?php if ($latestMaterial): ?>
-                    <div class="overview-card">
-                        <div class="overview-icon"><i class='bx bxs-book text-primary'></i></div>
-                        <div class="overview-content">
-                            <h3 class="overview-title">New Study Material</h3>
-                            <div class="overview-main"><?php echo htmlspecialchars($latestMaterial['file']); ?></div>
-                            <div class="overview-desc">Course: <?php echo htmlspecialchars($latestMaterial['course_code']); ?> | Uploaded: <?php echo $latestMaterial['date']; ?></div>
-                        </div>
-                    </div>
-                    <?php endif; ?>
-                    <?php if ($latestRoutine): ?>
-                    <div class="overview-card">
-                        <div class="overview-icon"><i class='bx bxs-calendar-check text-primary'></i></div>
-                        <div class="overview-content">
-                            <h3 class="overview-title">Routine Updated</h3>
-                            <div class="overview-main"><?php echo htmlspecialchars($latestRoutine['course_title']); ?> (<?php echo htmlspecialchars($latestRoutine['course_code']); ?>)</div>
-                            <div class="overview-desc">Section: <?php echo htmlspecialchars($latestRoutine['section']); ?></div>
-                        </div>
-                    </div>
-                    <?php endif; ?>
-                    <?php if (!$nextEvent && !$nextExam && !$latestMaterial && !$latestRoutine): ?>
-                    <div class="overview-card empty"><div class="overview-content"><div class="overview-title">No recent updates.</div></div></div>
-                    <?php endif; ?>
-                </div>
+        <div class="quick-access-card glow-yellow">
+            <div class="quick-access-card-content">
+                <div class="quick-access-number"><?php echo $requestCount; ?></div>
+                <div class="quick-access-label">Requests</div>
+            </div>
+            <div class="quick-access-icon yellow">
+                <i class='bx bxs-user'></i>
             </div>
         </div>
-    </main>
+
+        <div class="quick-access-card glow-pink">
+            <div class="quick-access-card-content">
+                <div class="quick-access-number"><?php echo $materialCount; ?></div>
+                <div class="quick-access-label">Materials</div>
+            </div>
+            <div class="quick-access-icon pink">
+                <i class='bx bxs-file'></i>
+            </div>
+        </div>
+
+        <div class="quick-access-card glow-blue">
+            <div class="quick-access-card-content">
+                <div class="quick-access-number"><?php echo $eventCount; ?></div>
+                <div class="quick-access-label">Events</div>
+            </div>
+            <div class="quick-access-icon blue">
+                <i class='bx bxs-calendar'></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-stack">
+        <div class="card">
+            <h2 class="text-xl font-semibold mb-4">Overview</h2>
+            <div class="dashboard-overview-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                <?php if ($nextEvent): ?>
+                <div class="overview-card">
+                    <div class="overview-icon"><i class='bx bxs-calendar text-primary'></i></div>
+                    <div class="overview-content">
+                        <h3 class="overview-title">Upcoming Event</h3>
+                        <div class="overview-main"><?php echo htmlspecialchars($nextEvent['title']); ?></div>
+                        <div class="overview-desc"><?php echo htmlspecialchars($nextEvent['description']); ?></div>
+                        <div class="overview-date"><?php echo date('M d, Y', strtotime($nextEvent['date'])); ?></div>
+                    </div>
+                </div>
+                <?php endif; ?>
+                <?php if ($nextExam): ?>
+                <div class="overview-card">
+                    <div class="overview-icon"><i class='bx bxs-time-five text-primary'></i></div>
+                    <div class="overview-content">
+                        <h3 class="overview-title">Upcoming Exam</h3>
+                        <div class="overview-main"><?php echo htmlspecialchars($nextExam['course_title']); ?></div>
+                        <div class="overview-desc">Date: <?php echo date('M d, Y', strtotime($nextExam['exam_date'])); ?> | Time: <?php echo htmlspecialchars($nextExam['exam_time']); ?> | Room: <?php echo htmlspecialchars($nextExam['room']); ?></div>
+                    </div>
+                </div>
+                <?php endif; ?>
+                <?php if ($latestMaterial): ?>
+                <div class="overview-card">
+                    <div class="overview-icon"><i class='bx bxs-book text-primary'></i></div>
+                    <div class="overview-content">
+                        <h3 class="overview-title">New Study Material</h3>
+                        <div class="overview-main"><?php echo htmlspecialchars($latestMaterial['file']); ?></div>
+                        <div class="overview-desc">Course: <?php echo htmlspecialchars($latestMaterial['course_code']); ?> | Uploaded: <?php echo $latestMaterial['date']; ?></div>
+                    </div>
+                </div>
+                <?php endif; ?>
+                <?php if ($latestRoutine): ?>
+                <div class="overview-card">
+                    <div class="overview-icon"><i class='bx bxs-calendar-check text-primary'></i></div>
+                    <div class="overview-content">
+                        <h3 class="overview-title">Routine Updated</h3>
+                        <div class="overview-main"><?php echo htmlspecialchars($latestRoutine['course_title']); ?> (<?php echo htmlspecialchars($latestRoutine['course_code']); ?>)</div>
+                        <div class="overview-desc">Section: <?php echo htmlspecialchars($latestRoutine['section']); ?></div>
+                    </div>
+                </div>
+                <?php endif; ?>
+                <?php if (!$nextEvent && !$nextExam && !$latestMaterial && !$latestRoutine): ?>
+                <div class="overview-card empty"><div class="overview-content"><div class="overview-title">No recent updates.</div></div></div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+  </main>
+</div>
 
     <script>
         document.getElementById('course').addEventListener('change', function() {

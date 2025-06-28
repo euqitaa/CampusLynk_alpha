@@ -91,6 +91,7 @@ try {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/layout.css">
@@ -98,111 +99,113 @@ try {
     <link rel="stylesheet" href="css/profile.css">
 </head>
 <body>
-    <?php include 'sidebar.php'; ?>
-    <main class="main-content">
-        <section class="welcome-section">
-            <h1>Course Management</h1>
-            <p class="text-muted">Manage your enrolled courses</p>
-        </section>
-        <?php if ($success): ?>
-            <div class="alert alert-success"><?php echo htmlspecialchars($success); ?></div>
-        <?php endif; ?>
-        <?php if ($error): ?>
-            <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
-        <?php endif; ?>
-        <div class="course-management-grid">
-            <section class="enroll-course card-style">
-                <h2 style="font-size: 1.35rem; font-weight: 600; margin-bottom: 1.2rem;">Enroll in a New Course</h2>
-                <form action="course_management.php" method="POST" class="form-grid">
-                    <div class="form-group">
-                        <label for="enroll_course_code" class="form-label">Course</label>
-                        <select name="enroll_course_code" id="enroll_course_code" class="form-input" required>
-                            <option value=""> Select a Course </option>
-                            <?php
-                            $uniqueCourses = [];
-                            foreach ($all_courses as $course) {
-                                if (!isset($uniqueCourses[$course['course_code']])) {
-                                    $uniqueCourses[$course['course_code']] = $course['course_title'];
-                                }
+<div class="dashboard-layout">
+  <?php include 'sidebar.php'; ?>
+  <main id="main-content" class="main-content fade-transition fade-out" style="">
+    <section class="welcome-section">
+        <h1>Course Management</h1>
+        <p class="text-muted">Manage your enrolled courses</p>
+    </section>
+    <?php if ($success): ?>
+        <div class="alert alert-success"><?php echo htmlspecialchars($success); ?></div>
+    <?php endif; ?>
+    <?php if ($error): ?>
+        <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
+    <?php endif; ?>
+    <div class="course-management-grid">
+        <section class="enroll-course card-style">
+            <h2 style="font-size: 1.35rem; font-weight: 600; margin-bottom: 1.2rem;">Enroll in a New Course</h2>
+            <form action="course_management.php" method="POST" class="form-grid">
+                <div class="form-group">
+                    <label for="enroll_course_code" class="form-label">Course</label>
+                    <select name="enroll_course_code" id="enroll_course_code" class="form-input" required>
+                        <option value=""> Select a Course </option>
+                        <?php
+                        $uniqueCourses = [];
+                        foreach ($all_courses as $course) {
+                            if (!isset($uniqueCourses[$course['course_code']])) {
+                                $uniqueCourses[$course['course_code']] = $course['course_title'];
                             }
-                            foreach ($uniqueCourses as $code => $title): ?>
-                                <option value="<?php echo htmlspecialchars($code); ?>"><?php echo htmlspecialchars($title) . ' (' . htmlspecialchars($code) . ')'; ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="enroll_section" class="form-label">Section</label>
-                        <select name="enroll_section" id="enroll_section" class="form-input" required disabled>
-                            <option value=""> Select a Section </option>
-                        </select>
-                    </div>
-                    <input type="hidden" name="enroll_course_id" id="enroll_course_id_hidden">
-                    <button type="submit" class="btn btn-primary">Enroll</button>
-                </form>
-            </section>
-            <section class="enrolled-courses card-style">
-                <h2 style="font-size: 1.35rem; font-weight: 600; margin-bottom: 1.2rem;">My Courses</h2>
-                <div class="courses-list">
-                    <?php if (empty($enrolled_courses)): ?>
-                        <p>You are not enrolled in any courses.</p>
-                    <?php else: ?>
-                        <?php foreach ($enrolled_courses as $course): ?>
-                            <div class="course-item">
-                                <div class="course-details">
-                                    <h3 class="course-title"><?php echo htmlspecialchars($course['course_title']); ?></h3>
-                                    <p class="course-meta"><?php echo htmlspecialchars($course['course_code']); ?> - Section <?php echo htmlspecialchars($course['section']); ?></p>
-                                </div>
-                                <form action="course_management.php" method="POST" onsubmit="return confirm('Are you sure you want to unenroll from this course?');">
-                                    <input type="hidden" name="unenroll_id" value="<?php echo $course['enrollment_id']; ?>">
-                                    <button type="submit" class="btn-unenroll">
-                                        <i class='bx bx-trash'></i>
-                                        <span>Remove</span>
-                                    </button>
-                                </form>
-                            </div>
+                        }
+                        foreach ($uniqueCourses as $code => $title): ?>
+                            <option value="<?php echo htmlspecialchars($code); ?>"><?php echo htmlspecialchars($title) . ' (' . htmlspecialchars($code) . ')'; ?></option>
                         <?php endforeach; ?>
-                    <?php endif; ?>
+                    </select>
                 </div>
-            </section>
-        </div>
-    </main>
-    <script>
-    // Prepare course-section mapping
-    const courseSectionMap = {};
-    <?php foreach ($all_courses as $course): ?>
-        if (!courseSectionMap[<?php echo json_encode($course['course_code']); ?>]) {
-            courseSectionMap[<?php echo json_encode($course['course_code']); ?>] = [];
-        }
-        courseSectionMap[<?php echo json_encode($course['course_code']); ?>].push({
-            id: <?php echo json_encode($course['id']); ?>,
-            section: <?php echo json_encode($course['section']); ?>
+                <div class="form-group">
+                    <label for="enroll_section" class="form-label">Section</label>
+                    <select name="enroll_section" id="enroll_section" class="form-input" required disabled>
+                        <option value=""> Select a Section </option>
+                    </select>
+                </div>
+                <input type="hidden" name="enroll_course_id" id="enroll_course_id_hidden">
+                <button type="submit" class="btn btn-primary">Enroll</button>
+            </form>
+        </section>
+        <section class="enrolled-courses card-style">
+            <h2 style="font-size: 1.35rem; font-weight: 600; margin-bottom: 1.2rem;">My Courses</h2>
+            <div class="courses-list">
+                <?php if (empty($enrolled_courses)): ?>
+                    <p>You are not enrolled in any courses.</p>
+                <?php else: ?>
+                    <?php foreach ($enrolled_courses as $course): ?>
+                        <div class="course-item">
+                            <div class="course-details">
+                                <h3 class="course-title"><?php echo htmlspecialchars($course['course_title']); ?></h3>
+                                <p class="course-meta"><?php echo htmlspecialchars($course['course_code']); ?> - Section <?php echo htmlspecialchars($course['section']); ?></p>
+                            </div>
+                            <form action="course_management.php" method="POST" onsubmit="return confirm('Are you sure you want to unenroll from this course?');">
+                                <input type="hidden" name="unenroll_id" value="<?php echo $course['enrollment_id']; ?>">
+                                <button type="submit" class="btn-unenroll">
+                                    <i class='bx bx-trash'></i>
+                                    <span>Remove</span>
+                                </button>
+                            </form>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
+        </section>
+    </div>
+  </main>
+</div>
+<script>
+// Prepare course-section mapping
+const courseSectionMap = {};
+<?php foreach ($all_courses as $course): ?>
+    if (!courseSectionMap[<?php echo json_encode($course['course_code']); ?>]) {
+        courseSectionMap[<?php echo json_encode($course['course_code']); ?>] = [];
+    }
+    courseSectionMap[<?php echo json_encode($course['course_code']); ?>].push({
+        id: <?php echo json_encode($course['id']); ?>,
+        section: <?php echo json_encode($course['section']); ?>
+    });
+<?php endforeach; ?>
+
+const courseSelect = document.getElementById('enroll_course_code');
+const sectionSelect = document.getElementById('enroll_section');
+const courseIdHidden = document.getElementById('enroll_course_id_hidden');
+
+courseSelect.addEventListener('change', function() {
+    const code = this.value;
+    sectionSelect.innerHTML = '<option value="">-- Select a Section --</option>';
+    sectionSelect.disabled = true;
+    courseIdHidden.value = '';
+    if (code && courseSectionMap[code]) {
+        courseSectionMap[code].forEach(function(item) {
+            const opt = document.createElement('option');
+            opt.value = item.section;
+            opt.textContent = 'Section ' + item.section;
+            opt.dataset.courseId = item.id;
+            sectionSelect.appendChild(opt);
         });
-    <?php endforeach; ?>
-
-    const courseSelect = document.getElementById('enroll_course_code');
-    const sectionSelect = document.getElementById('enroll_section');
-    const courseIdHidden = document.getElementById('enroll_course_id_hidden');
-
-    courseSelect.addEventListener('change', function() {
-        const code = this.value;
-        sectionSelect.innerHTML = '<option value="">-- Select a Section --</option>';
-        sectionSelect.disabled = true;
-        courseIdHidden.value = '';
-        if (code && courseSectionMap[code]) {
-            courseSectionMap[code].forEach(function(item) {
-                const opt = document.createElement('option');
-                opt.value = item.section;
-                opt.textContent = 'Section ' + item.section;
-                opt.dataset.courseId = item.id;
-                sectionSelect.appendChild(opt);
-            });
-            sectionSelect.disabled = false;
-        }
-    });
-    sectionSelect.addEventListener('change', function() {
-        const selectedOption = this.options[this.selectedIndex];
-        courseIdHidden.value = selectedOption && selectedOption.dataset.courseId ? selectedOption.dataset.courseId : '';
-    });
-    </script>
+        sectionSelect.disabled = false;
+    }
+});
+sectionSelect.addEventListener('change', function() {
+    const selectedOption = this.options[this.selectedIndex];
+    courseIdHidden.value = selectedOption && selectedOption.dataset.courseId ? selectedOption.dataset.courseId : '';
+});
+</script>
 </body>
 </html> 

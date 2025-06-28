@@ -174,6 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_courses'])) 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/layout.css">
@@ -198,84 +199,85 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_courses'])) 
     </style>
 </head>
 <body>
-    <?php include 'sidebar.php'; ?>
+<div class="dashboard-layout">
+  <?php include 'sidebar.php'; ?>
+  <main id="main-content" class="main-content fade-transition fade-out" style="">
+    <section class="welcome-section">
+        <h1>Routine Suggestor</h1>
+        <p class="text-muted">Select your courses and get the best possible routine</p>
+    </section>
 
-    <main class="main-content">
-        <section class="welcome-section">
-            <h1>Routine Suggestor</h1>
-            <p class="text-muted">Select your courses and get the best possible routine</p>
-        </section>
+    <div class="shadcn-card">
+        <form id="routineForm" method="post">
+            <label class="shadcn-label">Select Courses</label>
+            <div style="position:relative; max-width:500px;">
+                <input type="text" id="courseSearch" class="shadcn-search" placeholder="Search and select courses..." autocomplete="off">
+                <div id="dropdown" class="shadcn-dropdown" style="display:none;"></div>
+            </div>
+            <div class="shadcn-chips" id="selectedChips"></div>
+            <button type="submit" class="shadcn-btn">Generate Routine</button>
+        </form>
+    </div>
 
-        <div class="shadcn-card">
-            <form id="routineForm" method="post">
-                <label class="shadcn-label">Select Courses</label>
-                <div style="position:relative; max-width:500px;">
-                    <input type="text" id="courseSearch" class="shadcn-search" placeholder="Search and select courses..." autocomplete="off">
-                    <div id="dropdown" class="shadcn-dropdown" style="display:none;"></div>
-                </div>
-                <div class="shadcn-chips" id="selectedChips"></div>
-                <button type="submit" class="shadcn-btn">Generate Routine</button>
-            </form>
-        </div>
-
-        <div id="routineResults">
-            <?php if (isset($suggested_routines) && !empty($suggested_routines)): ?>
-                <h2>Best Suggested Routine</h2>
-                <?php $best = $suggested_routines[0]; ?>
-                <table class="routine-table">
-                    <thead>
-                        <tr>
-                            <th>Course</th><th>Section</th><th>Room 1</th><th>Room 2</th><th>Day 1</th><th>Time 1</th><th>Day 2</th><th>Time 2</th><th>Faculty</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    <?php foreach ($best['schedules'] as $row): ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($row['course_code']); ?></td>
-                            <td><?php echo htmlspecialchars($row['section']); ?></td>
-                            <td><?php echo htmlspecialchars($row['room1']); ?></td>
-                            <td><?php echo htmlspecialchars($row['room2']); ?></td>
-                            <td><?php echo htmlspecialchars($row['day1']); ?></td>
-                            <td><?php echo htmlspecialchars($row['time1']); ?></td>
-                            <td><?php echo htmlspecialchars($row['day2']); ?></td>
-                            <td><?php echo htmlspecialchars($row['time2']); ?></td>
-                            <td><?php echo htmlspecialchars($row['faculty_name']); ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                    </tbody>
-                </table>
-                <?php if (count($suggested_routines) > 1): ?>
-                <div class="routine-alternatives">
-                    <h3>Other Possible Routines</h3>
-                    <?php for ($i = 1; $i < min(6, count($suggested_routines)); $i++): ?>
-                        <table class="routine-table" style="margin-bottom:1.5rem;">
-                            <thead>
-                                <tr>
-                                    <th>Course</th><th>Section</th><th>Room 1</th><th>Room 2</th><th>Day 1</th><th>Time 1</th><th>Day 2</th><th>Time 2</th><th>Faculty</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            <?php foreach ($suggested_routines[$i]['schedules'] as $row): ?>
-                                <tr>
-                                    <td><?php echo htmlspecialchars($row['course_code']); ?></td>
-                                    <td><?php echo htmlspecialchars($row['section']); ?></td>
-                                    <td><?php echo htmlspecialchars($row['room1']); ?></td>
-                                    <td><?php echo htmlspecialchars($row['room2']); ?></td>
-                                    <td><?php echo htmlspecialchars($row['day1']); ?></td>
-                                    <td><?php echo htmlspecialchars($row['time1']); ?></td>
-                                    <td><?php echo htmlspecialchars($row['day2']); ?></td>
-                                    <td><?php echo htmlspecialchars($row['time2']); ?></td>
-                                    <td><?php echo htmlspecialchars($row['faculty_name']); ?></td>
-                                </tr>
-                            <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    <?php endfor; ?>
-                </div>
-                <?php endif; ?>
+    <div id="routineResults">
+        <?php if (isset($suggested_routines) && !empty($suggested_routines)): ?>
+            <h2>Best Suggested Routine</h2>
+            <?php $best = $suggested_routines[0]; ?>
+            <table class="routine-table">
+                <thead>
+                    <tr>
+                        <th>Course</th><th>Section</th><th>Room 1</th><th>Room 2</th><th>Day 1</th><th>Time 1</th><th>Day 2</th><th>Time 2</th><th>Faculty</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($best['schedules'] as $row): ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($row['course_code']); ?></td>
+                        <td><?php echo htmlspecialchars($row['section']); ?></td>
+                        <td><?php echo htmlspecialchars($row['room1']); ?></td>
+                        <td><?php echo htmlspecialchars($row['room2']); ?></td>
+                        <td><?php echo htmlspecialchars($row['day1']); ?></td>
+                        <td><?php echo htmlspecialchars($row['time1']); ?></td>
+                        <td><?php echo htmlspecialchars($row['day2']); ?></td>
+                        <td><?php echo htmlspecialchars($row['time2']); ?></td>
+                        <td><?php echo htmlspecialchars($row['faculty_name']); ?></td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+            <?php if (count($suggested_routines) > 1): ?>
+            <div class="routine-alternatives">
+                <h3>Other Possible Routines</h3>
+                <?php for ($i = 1; $i < min(6, count($suggested_routines)); $i++): ?>
+                    <table class="routine-table" style="margin-bottom:1.5rem;">
+                        <thead>
+                            <tr>
+                                <th>Course</th><th>Section</th><th>Room 1</th><th>Room 2</th><th>Day 1</th><th>Time 1</th><th>Day 2</th><th>Time 2</th><th>Faculty</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <?php foreach ($suggested_routines[$i]['schedules'] as $row): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($row['course_code']); ?></td>
+                                <td><?php echo htmlspecialchars($row['section']); ?></td>
+                                <td><?php echo htmlspecialchars($row['room1']); ?></td>
+                                <td><?php echo htmlspecialchars($row['room2']); ?></td>
+                                <td><?php echo htmlspecialchars($row['day1']); ?></td>
+                                <td><?php echo htmlspecialchars($row['time1']); ?></td>
+                                <td><?php echo htmlspecialchars($row['day2']); ?></td>
+                                <td><?php echo htmlspecialchars($row['time2']); ?></td>
+                                <td><?php echo htmlspecialchars($row['faculty_name']); ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                <?php endfor; ?>
+            </div>
             <?php endif; ?>
-        </div>
-    </main>
+        <?php endif; ?>
+    </div>
+  </main>
+</div>
 
     <script>
     // Inject allCourses for JS file

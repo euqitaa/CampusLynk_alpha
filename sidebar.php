@@ -36,7 +36,9 @@ $role = $sidebar_user['role'];
 <aside class="sidebar">
     <div class="sidebar-header">
         <div class="logo-and-title-div">
-            <a href="<?php echo $role === 'faculty' ? 'faculty_dashboard.php' : ($role === 'admin' ? 'admin_dashboard.php' : 'dashboard.php'); ?>" class="navbar-brand">CampusLynk</a>
+            <div class="sidebar-brand">
+                <a href="dashboard.php" class="navbar-brand sidebar-logo"><span>CampusLynk</span></a>
+            </div>
         </div>
         <a href="<?php echo $role === 'faculty' ? 'faculty_dashboard.php' : ($role === 'admin' ? 'admin_dashboard.php' : 'profile.php'); ?>" class="user-info">
             <div class="user-avatar">
@@ -214,5 +216,40 @@ document.getElementById('mobileMenuToggle').addEventListener('click', function()
     document.querySelector('.sidebar').classList.toggle('active');
     this.querySelector('i').classList.toggle('bx-menu');
     this.querySelector('i').classList.toggle('bx-x');
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Sidebar button fade effect
+  const navLinks = document.querySelectorAll('.nav-link');
+  navLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      // Only handle internal links
+      if (this.hostname === window.location.hostname && this.getAttribute('href')) {
+        e.preventDefault();
+        // Remove fade from all, add to clicked
+        navLinks.forEach(l => l.classList.remove('sidebar-fade'));
+        this.classList.add('sidebar-fade');
+        // Fade out main content
+        const main = document.getElementById('main-content');
+        if (main) {
+          main.classList.remove('fade-in');
+          main.classList.add('fade-out');
+          setTimeout(() => {
+            window.location.href = this.href;
+          }, 300);
+        } else {
+          window.location.href = this.href;
+        }
+      }
+    });
+  });
+  // On page load, fade in main content
+  const main = document.getElementById('main-content');
+  if (main) {
+    setTimeout(() => {
+      main.classList.add('fade-in');
+      main.classList.remove('fade-out');
+    }, 10);
+  }
 });
 </script>

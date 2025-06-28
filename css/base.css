@@ -99,12 +99,8 @@ h6 { font-size: 1rem; }
   padding: 0 var(--spacing-4);
 }
 
-.main-content {
-  margin-left: 280px;
-  padding: 2rem;
-  min-height: 100vh;
-  background-color: var(--background);
-}
+/* Remove legacy sidebar/main-content layout rules */
+/* .main-content, .sidebar { ... } */
 
 @media (max-width: 768px) {
   .main-content {

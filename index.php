@@ -114,7 +114,7 @@
             </div>
             <div style="width:100%;text-align:center;margin:1.5rem 0 0 0;">
         <a href="admin_login.php" style="color:#b0bedc;font-size:0.98rem;opacity:0.7;text-decoration:none;transition:color 0.2s;">Enter to mlobby</a>
-    </div>
+            </div>
         </div>
     </footer>
     
@@ -176,9 +176,9 @@
     
     // Manual scroll still works
     featuresGrid.addEventListener('wheel', function(e) {
-        if (e.deltaY === 0) return;
-        e.preventDefault();
-        featuresGrid.scrollLeft += e.deltaY;
+      if (e.deltaY === 0) return;
+      e.preventDefault();
+      featuresGrid.scrollLeft += e.deltaY;
     }, { passive: false });
     </script>
 </body>

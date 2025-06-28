@@ -61,9 +61,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             <div class="auth-left-content">
             <a href="index.php" class="back-home auth-switch">
-                <i class='bx bx-arrow-back'></i>
-                Back to Home
-            </a>
+                    <i class='bx bx-arrow-back'></i>
+                    Back to Home
+                </a>
             <h1 class="text-3xl font-bold" style="margin-bottom: 1.5rem;">Sign In</h1>
                 <h2 class="text-2xl font-semibold mb-4" style="margin-bottom: 1.2rem;">Continue to CampusLynk!</h2>
                 <p class="text-lg text-muted" style="color: #eaf1fb; margin-bottom: 2.5rem;">Sign in to access your personalized student dashboard and stay connected with your academic journey.</p>
