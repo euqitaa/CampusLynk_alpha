@@ -73,18 +73,23 @@
     padding: 0.5rem 1rem;
     font-size: 0.875rem;
     font-weight: 500;
-    color: var(--primary-foreground);
-    background: var(--primary);
+    color: #fff !important;
+    background: #2563eb !important; /* fallback for var(--primary) */
     border-radius: var(--radius);
     transition: all 0.2s ease;
+    text-decoration: none;
+    border: none;
+    outline: none;
 }
-
-.btn-view-details:hover {
-    background: var(--primary-dark);
+.btn-view-details:hover, .btn-view-details:focus {
+    background: #1e40af !important; /* fallback for var(--primary-dark) */
+    color: #fff !important;
+    text-decoration: none;
 }
-
 .btn-view-details i {
     font-size: 1.25rem;
+    color: #fff !important;
+    transition: color 0.2s;
 }
 
 /* Empty State */
@@ -129,5 +134,187 @@
 
     .event-content {
         padding: 1.25rem;
+    }
+}
+
+/* Event Details Page Styles */
+.event-details-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.event-card {
+    width: 100%;
+    max-width: 700px;
+    background: var(--background);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.event-header {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    border-bottom: 1px solid var(--border);
+    padding: 1.5rem 2rem 1rem 2rem;
+    background: var(--muted);
+}
+
+.event-icon {
+    font-size: 2.5rem;
+    color: var(--primary);
+    flex-shrink: 0;
+}
+
+.event-title-section {
+    flex: 1;
+}
+
+.event-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+    color: var(--foreground);
+}
+
+.event-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    font-size: 1rem;
+    color: var(--muted-foreground);
+}
+.event-meta span {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+.event-meta i {
+    color: var(--primary);
+    font-size: 1.2rem;
+}
+
+.event-content {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.event-description h3,
+.event-organizer h3,
+.event-contact h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+    color: var(--foreground);
+}
+.event-description p,
+.event-organizer p,
+.event-contact p {
+    color: var(--muted-foreground);
+    font-size: 1rem;
+    margin: 0;
+}
+
+.event-actions {
+    display: flex;
+    gap: 1rem;
+    padding: 1.25rem 2rem 1.5rem 2rem;
+    border-top: 1px solid var(--border);
+    background: var(--background);
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: var(--radius);
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+.btn-primary {
+    background: var(--primary);
+    color: var(--primary-foreground);
+}
+.btn-primary:hover {
+    background: var(--primary-dark);
+}
+.btn-secondary {
+    background: var(--muted);
+    color: var(--primary);
+    border: 1px solid var(--primary);
+}
+.btn-secondary:hover {
+    background: var(--primary);
+    color: var(--primary-foreground);
+}
+
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--primary);
+    font-weight: 500;
+    text-decoration: none;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    transition: color 0.2s;
+}
+.back-button:hover {
+    color: var(--primary-dark);
+    text-decoration: underline;
+}
+
+.page-header {
+    margin-bottom: 0.5rem;
+}
+.header-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.header-text h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin: 0 0 0.3rem 0;
+}
+.header-text p {
+    color: var(--muted-foreground);
+    margin: 0;
+}
+
+@media (max-width: 900px) {
+    .event-card {
+        max-width: 98vw;
+    }
+    .event-header, .event-content, .event-actions {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
+@media (max-width: 600px) {
+    .event-header, .event-content, .event-actions {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+    .event-title {
+        font-size: 1.3rem;
+    }
+    .header-text h1 {
+        font-size: 1.3rem;
     }
 } 

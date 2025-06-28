@@ -36,7 +36,7 @@ try {
 </head>
 <body>
     <?php include 'sidebar.php'; ?>
-    <main class="admin-content">
+    <main class="main-content">
         <div class="admin-header">
             <div>
                 <h1 class="text-2xl font-bold">Settings</h1>

@@ -56,36 +56,56 @@ if (is_dir($materials_path)) {
     <link rel="stylesheet" href="css/materials-list.css">
 </head>
 <body>
-<div class="dashboard-layout">
-  <?php include 'sidebar.php'; ?>
-  <main id="main-content" class="fade-transition fade-out" style="">
-    <section class="page-header">
-        <a href="study-materials.php" class="back-link"><i class='bx bx-arrow-back'></i> Back to Courses</a>
-        <h1><?php echo $course_title; ?></h1>
-        <p class="text-muted">Available study materials for this course</p>
-    </section>
+    <?php include 'sidebar.php'; ?>
+    <main class="main-content">
+        <section class="page-header">
+            <a href="study-materials.php" class="back-link"><i class='bx bx-arrow-back'></i> Back to Courses</a>
+            <h1><?php echo $course_title; ?></h1>
+            <p class="text-muted">Available study materials for this course</p>
+        </section>
 
-    <div class="materials-container">
-        <?php if (empty($files)): ?>
-            <div class="empty-state">
-                <i class='bx bx-file-blank'></i>
-                <p>No study materials have been uploaded for this course yet.</p>
+        <?php if (isset($_GET['msg'])): ?>
+            <div class="alert <?php echo isset($_GET['error']) ? 'alert-error' : 'alert-success'; ?>">
+                <?php echo htmlspecialchars($_GET['msg']); ?>
             </div>
-        <?php else: ?>
-            <ul class="materials-list">
-                <?php foreach ($files as $file): ?>
-                    <li>
-                        <a href="<?php echo htmlspecialchars($materials_path . '/' . $file); ?>" target="_blank" class="material-item">
-                            <i class='bx bxs-file-pdf'></i>
-                            <span><?php echo htmlspecialchars($file); ?></span>
-                            <i class='bx bx-link-external link-icon'></i>
-                        </a>
-                    </li>
-                <?php endforeach; ?>
-            </ul>
         <?php endif; ?>
-    </div>
-  </main>
-</div>
+
+        <div class="add-material-section" style="margin-bottom:2rem;">
+            <button id="show-upload-form" class="btn btn-primary" style="margin-bottom:1rem;">Add Study Material</button>
+            <form id="upload-form" action="upload_study_material.php" method="post" enctype="multipart/form-data" style="display:none;" onsubmit="return confirm('Upload this file?');">
+                <input type="hidden" name="course_code" value="<?php echo htmlspecialchars($course_code); ?>">
+                <label for="material_file">Select PDF file:</label>
+                <input type="file" name="material_file" id="material_file" accept="application/pdf" required>
+                <button type="submit" class="btn btn-primary">Upload</button>
+            </form>
+        </div>
+        <script>
+        document.getElementById('show-upload-form').onclick = function() {
+            document.getElementById('upload-form').style.display = 'block';
+            this.style.display = 'none';
+        };
+        </script>
+
+        <div class="materials-container">
+            <?php if (empty($files)): ?>
+                <div class="empty-state">
+                    <i class='bx bx-file-blank'></i>
+                    <p>No study materials have been uploaded for this course yet.</p>
+                </div>
+            <?php else: ?>
+                <ul class="materials-list">
+                    <?php foreach ($files as $file): ?>
+                        <li>
+                            <a href="<?php echo htmlspecialchars($materials_path . '/' . $file); ?>" target="_blank" class="material-item">
+                                <i class='bx bxs-file-pdf'></i>
+                                <span><?php echo htmlspecialchars($file); ?></span>
+                                <i class='bx bx-link-external link-icon'></i>
+                            </a>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endif; ?>
+        </div>
+    </main>
 </body>
 </html> 
