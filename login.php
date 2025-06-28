@@ -52,17 +52,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="css/auth.css">
 </head>
 <body class="auth-page">
+    <!-- Page transition overlay -->
+    <div class="page-transition-overlay" id="transitionOverlay"></div>
+    
     <div class="auth-container">
         <!-- Left Box - Branding and Message -->
         <div class="auth-left">
             
             <div class="auth-left-content">
-            <a href="index.php" class="back-home">
+            <a href="index.php" class="back-home auth-switch">
                 <i class='bx bx-arrow-back'></i>
                 Back to Home
             </a>
-            <h1 class="text-4xl font-bold" style="margin-bottom: 1.2rem;">CampusLynk</h1>
-                <h2 class="text-3xl font-bold" style="margin-bottom: 1.2rem;">Sign In</h2>
+            <h1 class="text-3xl font-bold" style="margin-bottom: 1.5rem;">Sign In</h1>
+                <h2 class="text-2xl font-semibold mb-4" style="margin-bottom: 1.2rem;">Continue to CampusLynk!</h2>
                 <p class="text-lg text-muted" style="color: #eaf1fb; margin-bottom: 2.5rem;">Sign in to access your personalized student dashboard and stay connected with your academic journey.</p>
             </div>
         </div>
@@ -70,7 +73,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <!-- Right Box - Login Form -->
         <div class="auth-right">
             <div class="auth-form-container">
-                <h2 class="text-2xl font-semibold mb-6">Sign In</h2>
                 <?php
                 if(isset($_GET['error'])) {
                     echo '<div class="alert alert-error mb-4">' . htmlspecialchars($_GET['error']) . '</div>';
@@ -105,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <button type="submit" class="btn btn-primary w-full">Sign In</button>
                     
                     <p class="text-muted text-center mt-6">
-                        Don't have an account? <a href="signup.php" class="text-primary font-medium">Sign Up</a>
+                        Don't have an account? <a href="signup.php" class="text-primary font-medium auth-switch">Sign Up</a>
                     </p>
                 </form>
             </div>
@@ -126,5 +128,41 @@ function togglePassword(inputId, btn) {
         icon.classList.add('bx-show');
     }
 }
+
+// Page transition functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const authSwitches = document.querySelectorAll('.auth-switch');
+    const overlay = document.getElementById('transitionOverlay');
+    
+    // Hide overlay after page loads
+    setTimeout(() => {
+        overlay.classList.add('hidden');
+    }, 100);
+    
+    authSwitches.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const body = document.querySelector('.auth-page');
+            
+            // Show overlay immediately to prevent white flash
+            overlay.classList.remove('hidden');
+            overlay.classList.add('active');
+            
+            // Check if it's the back-to-home link
+            if (this.href.includes('index.php')) {
+                body.classList.add('zoom-out');
+                setTimeout(() => {
+                    window.location.href = this.href;
+                }, 400);
+            } else {
+                // Regular fade-out for other links
+                body.classList.add('fade-out');
+                setTimeout(() => {
+                    window.location.href = this.href;
+                }, 300);
+            }
+        });
+    });
+});
 </script>
 </html>

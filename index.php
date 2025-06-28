@@ -9,8 +9,33 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/index.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        /* Preloader to prevent white flash */
+        .page-preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse 80% 60% at 20% 20%, #3a5ba0 0%, transparent 70%),
+                radial-gradient(ellipse 60% 40% at 80% 30%, #1e2a47 0%, transparent 80%),
+                radial-gradient(ellipse 60% 40% at 60% 80%, #223a6d 0%, transparent 80%),
+                linear-gradient(120deg, #101624 0%, #1a2233 100%);
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+        .page-preloader.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+    </style>
 </head>
 <body>
+    <!-- Preloader overlay -->
+    <div class="page-preloader" id="pagePreloader"></div>
+    
     <header class="landing-header">
         <nav class="landing-navbar">
             <div class="navbar-container">
@@ -87,18 +112,73 @@
                 <a href="#" title="Instagram"><i class='bx bxl-instagram'></i></a>
                 <a href="#" title="LinkedIn"><i class='bx bxl-linkedin'></i></a>
             </div>
-        </div>
-    </footer>
-    <div style="width:100%;text-align:center;margin:1.5rem 0 0 0;">
+            <div style="width:100%;text-align:center;margin:1.5rem 0 0 0;">
         <a href="admin_login.php" style="color:#b0bedc;font-size:0.98rem;opacity:0.7;text-decoration:none;transition:color 0.2s;">Enter to mlobby</a>
     </div>
+        </div>
+    </footer>
+    
     <script>
-    // Enable mouse wheel horizontal scrolling for the features row
+    // Preloader functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const preloader = document.getElementById('pagePreloader');
+        
+        // Hide preloader after page is fully loaded
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                preloader.classList.add('fade-out');
+            }, 200);
+        });
+        
+        // Fallback: hide preloader after 1 second if load event doesn't fire
+        setTimeout(() => {
+            preloader.classList.add('fade-out');
+        }, 1000);
+    });
+    
+    // Automatic scrolling for the features section
     const featuresGrid = document.querySelector('.features-grid');
+    let scrollDirection = 1; // 1 for right, -1 for left
+    let scrollSpeed = 1; // pixels per frame
+    let isScrolling = true;
+    
+    function autoScroll() {
+        if (!isScrolling) return;
+        
+        const maxScroll = featuresGrid.scrollWidth - featuresGrid.clientWidth;
+        
+        if (featuresGrid.scrollLeft >= maxScroll) {
+            scrollDirection = -1; // Change direction to left
+        } else if (featuresGrid.scrollLeft <= 0) {
+            scrollDirection = 1; // Change direction to right
+        }
+        
+        featuresGrid.scrollLeft += scrollSpeed * scrollDirection;
+        requestAnimationFrame(autoScroll);
+    }
+    
+    // Pause auto-scroll on hover
+    featuresGrid.addEventListener('mouseenter', () => {
+        isScrolling = false;
+    });
+    
+    featuresGrid.addEventListener('mouseleave', () => {
+        isScrolling = true;
+        autoScroll();
+    });
+    
+    // Start auto-scroll when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+            autoScroll();
+        }, 1000); // Start after 1 second
+    });
+    
+    // Manual scroll still works
     featuresGrid.addEventListener('wheel', function(e) {
-      if (e.deltaY === 0) return;
-      e.preventDefault();
-      featuresGrid.scrollLeft += e.deltaY;
+        if (e.deltaY === 0) return;
+        e.preventDefault();
+        featuresGrid.scrollLeft += e.deltaY;
     }, { passive: false });
     </script>
 </body>

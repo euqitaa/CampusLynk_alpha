@@ -126,23 +126,7 @@ if (isset($_SESSION['faculty_name'])) {
     <link rel="stylesheet" href="css/faculty.css">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <!-- <script>
-        $(document).ready(function () {
-
-            $('#content').load("header.php");
-
-        });
-    </script>
-    <script>
-        $(document).ready(function () {
-
-            $('#content1').load("sidebar.php");
-
-        });
-    </script> -->
-
 </head>
-
 <body class="dashboard-page">
     <div class="dashboard-container">
         <?php include 'sidebar.php'; ?>

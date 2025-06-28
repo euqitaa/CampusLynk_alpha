@@ -75,16 +75,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="css/auth.css">
 </head>
 <body class="auth-page">
+    <!-- Page transition overlay -->
+    <div class="page-transition-overlay" id="transitionOverlay"></div>
+    
     <div class="auth-container">
         <!-- Left Box - Branding and Message -->
         <div class="auth-left">
             <div class="auth-left-content" style="display: flex; flex-direction: column; align-items: flex-start; justify-content: center; height: 100vh; max-width: 360px; margin: 0 auto;">
-                <a href="index.php" class="back-home" style="margin-bottom: 2rem;">
+                <a href="index.php" class="back-home auth-switch" style="margin-bottom: 2rem;">
                     <i class='bx bx-arrow-back'></i>
                     Back to Home
                 </a>
-                <h1 class="text-3xl font-bold" style="margin-bottom: 1.2rem;">CampusLynk</h1>
-                <h2 class="text-2xl font-semibold mb-4" style="margin-bottom: 1.2rem;">Join Our Community!</h2>
+                <h1 class="text-3xl font-bold" style="margin-bottom: 1.2rem;">Sign Up</h1>
+                <h2 class="text-2xl font-semibold mb-4" style="margin-bottom: 1.2rem;">Join CampusLynk!</h2>
                 <p class="text-lg text-muted" style="color: #eaf1fb;">Create your account to access study materials, connect with faculty, and stay updated with campus events.</p>
             </div>
         </div>
@@ -92,7 +95,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <!-- Right Box - Signup Form -->
         <div class="auth-right">
             <div class="auth-form-container">
-                <h2 class="text-2xl font-semibold mb-6">Create Account</h2>
                 <?php
                 if(isset($_GET['error'])) {
                     echo '<div class="alert alert-error mb-4">' . htmlspecialchars($_GET['error']) . '</div>';
@@ -179,7 +181,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <button type="submit" class="btn btn-primary w-full">Create Account</button>
                     
                     <p class="text-muted text-center mt-6">
-                        Already have an account? <a href="login.php" class="text-primary font-medium">Sign In</a>
+                        Already have an account? <a href="login.php" class="text-primary font-medium auth-switch">Sign In</a>
                     </p>
                 </form>
             </div>
@@ -221,6 +223,40 @@ function toggleFields() {
 }
 document.addEventListener('DOMContentLoaded', function() {
     toggleFields();
+    
+    // Page transition functionality
+    const authSwitches = document.querySelectorAll('.auth-switch');
+    const overlay = document.getElementById('transitionOverlay');
+    
+    // Hide overlay after page loads
+    setTimeout(() => {
+        overlay.classList.add('hidden');
+    }, 100);
+    
+    authSwitches.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const body = document.querySelector('.auth-page');
+            
+            // Show overlay immediately to prevent white flash
+            overlay.classList.remove('hidden');
+            overlay.classList.add('active');
+            
+            // Check if it's the back-to-home link
+            if (this.href.includes('index.php')) {
+                body.classList.add('zoom-out');
+                setTimeout(() => {
+                    window.location.href = this.href;
+                }, 400);
+            } else {
+                // Regular fade-out for other links
+                body.classList.add('fade-out');
+                setTimeout(() => {
+                    window.location.href = this.href;
+                }, 300);
+            }
+        });
+    });
 });
 </script>
 </html>
