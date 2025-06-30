@@ -29,16 +29,20 @@ try {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (isset($_POST['enroll_course_id'])) {
                 $course_id = intval($_POST['enroll_course_id']);
-                $section = $_POST['section'] ?? '';
-                // Check if already enrolled
-                $checkStmt = $db->prepare("SELECT COUNT(*) FROM student_enrollments WHERE student_id = ? AND course_id = ?");
-                $checkStmt->execute([$userId, $course_id]);
-                if ($checkStmt->fetchColumn() == 0) {
-                    $enrollStmt = $db->prepare("INSERT INTO student_enrollments (student_id, course_id, section) VALUES (?, ?, ?)");
-                    $enrollStmt->execute([$userId, $course_id, $section]);
-                    $success = "Successfully enrolled in course.";
+                $section = isset($_POST['enroll_section']) ? trim($_POST['enroll_section']) : '';
+                if ($section === '') {
+                    $error = "Please select a section.";
                 } else {
-                    $error = "Already enrolled in this course.";
+                    // Check if already enrolled
+                    $checkStmt = $db->prepare("SELECT COUNT(*) FROM student_enrollments WHERE student_id = ? AND course_id = ?");
+                    $checkStmt->execute([$userId, $course_id]);
+                    if ($checkStmt->fetchColumn() == 0) {
+                        $enrollStmt = $db->prepare("INSERT INTO student_enrollments (student_id, course_id, section) VALUES (?, ?, ?)");
+                        $enrollStmt->execute([$userId, $course_id, $section]);
+                        $success = "Successfully enrolled in course.";
+                    } else {
+                        $error = "Already enrolled in this course.";
+                    }
                 }
             } elseif (isset($_POST['unenroll_id'])) {
                 $enrollment_id = intval($_POST['unenroll_id']);

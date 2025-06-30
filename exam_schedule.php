@@ -22,7 +22,7 @@ try {
     if ($user) {
         $userId = $user['id'];
 
-        // Fetch the student's exam schedule by joining enrollments with exam_schedules
+        // Simplified query: Get enrolled courses and match with exam_schedules directly
         $examQuery = "
             SELECT 
                 es.course_title,
@@ -34,8 +34,10 @@ try {
                 es.teacher
             FROM student_enrollments se
             JOIN upcoming_courses uc ON se.course_id = uc.id
-            JOIN exam_schedules es ON es.course_code = uc.course_code AND es.section = se.section
-            WHERE se.student_id = ?
+            JOIN exam_schedules es ON es.course_code = uc.course_code 
+                AND es.section = se.section
+            WHERE se.student_id = ? 
+                AND es.exam_date >= CURDATE()
             ORDER BY es.exam_date, es.exam_time
         ";
         
@@ -46,6 +48,8 @@ try {
 } catch(PDOException $e) {
     // A more user-friendly error message
     echo "<p>Could not retrieve exam schedule. Please try again later.</p>";
+    // For debugging, you can uncomment the next line
+    // echo "<p>Error: " . $e->getMessage() . "</p>";
 }
 ?>
 
@@ -105,6 +109,7 @@ try {
                             <div class="empty-state">
                                 <i class='bx bx-calendar-x'></i>
                                 <p>No exams scheduled for your enrolled courses</p>
+                                <small class="text-muted">Please check back later or contact your department for updated exam schedules.</small>
                             </div>
                         </td>
                     </tr>
