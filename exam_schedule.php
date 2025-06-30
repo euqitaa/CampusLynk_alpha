@@ -22,28 +22,20 @@ try {
     if ($user) {
         $userId = $user['id'];
 
-        // Simplified query: Get enrolled courses and match with exam_schedules directly
-        $examQuery = "
-            SELECT 
-                es.course_title,
-                es.course_code,
-                es.exam_date,
-                es.exam_time,
-                es.section,
-                es.room,
-                es.teacher
-            FROM student_enrollments se
-            JOIN upcoming_courses uc ON se.course_id = uc.id
-            JOIN exam_schedules es ON es.course_code = uc.course_code 
-                AND es.section = se.section
-            WHERE se.student_id = ? 
-                AND es.exam_date >= CURDATE()
-            ORDER BY es.exam_date, es.exam_time
-        ";
-        
-        $examStmt = $db->prepare($examQuery);
-        $examStmt->execute([$userId]);
-        $exams = $examStmt->fetchAll(PDO::FETCH_ASSOC);
+        // Fetch all enrolled courses (course_code, section)
+        $enrollStmt = $db->prepare("SELECT uc.course_code, uc.course_title, se.section FROM student_enrollments se JOIN upcoming_courses uc ON se.course_id = uc.id WHERE se.student_id = ?");
+        $enrollStmt->execute([$userId]);
+        $enrolledCourses = $enrollStmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // For each enrolled course, fetch the matching future exam
+        $examStmt = $db->prepare("SELECT * FROM exam_schedules WHERE course_code LIKE CONCAT('%', ?, '%') AND section = ? AND exam_date >= CURDATE() ORDER BY exam_date, exam_time LIMIT 1");
+        foreach ($enrolledCourses as $course) {
+            $examStmt->execute([$course['course_code'], $course['section']]);
+            $exam = $examStmt->fetch(PDO::FETCH_ASSOC);
+            if ($exam) {
+                $exams[] = $exam;
+            }
+        }
     }
 } catch(PDOException $e) {
     // A more user-friendly error message
